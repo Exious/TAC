@@ -24,24 +24,6 @@ class Signal:
         }
         self.dead_zone_vec = None
         self.saturation_vec = None
-        '''self.sig_sin = {
-            'data': None,
-            'after_relay': None,
-            'after_dead_zone': None,
-            'after_saturation': None
-        }
-        self.sig_meandr = {
-            'data': None,
-            'after_relay': None,
-            'after_dead_zone': None,
-            'after_saturation': None
-        }
-        self.sig_sawtooth = {
-            'data': None,
-            'after_relay': None,
-            'after_dead_zone': None,
-            'after_saturation': None
-        }'''
 
     def getParams(self):
         print("Вариант номер: {}".format(self.variant))
@@ -60,8 +42,6 @@ class Signal:
         self.t = np.arange(0, self.test_signal_duration, self.dt)
 
     def getSignals(self):
-        # self.getTestVector()
-
         self.phaze = self.test_sig_freq * self.t * 2 * np.pi
 
         self.sig['sine']['data'] = self.test_sig_ampl * np.sin(self.phaze)
@@ -69,14 +49,6 @@ class Signal:
             signal.square(self.phaze)
         self.sig['sawtooth']['data'] = self.test_sig_ampl * \
             signal.sawtooth(self.phaze)
-####################
-        '''self.sig_sin['data'] = self.test_sig_ampl * np.sin(self.phaze)
-        self.sig_meandr['data'] = self.test_sig_ampl * \
-            signal.square(self.phaze)
-        self.sig_sawtooth['data'] = self.test_sig_ampl * \
-            signal.sawtooth(self.phaze)'''
-
-        #print(self.sig['sin']['data'], self.sig_sin['data'])
 
     def getSignalSpec(self, sig):
         sig_spec = np.abs(np.fft.fft(sig))
@@ -127,10 +99,9 @@ class Signal:
 
 
 class Utility:
-    def __init__(self, options, transliteration):
+    def __init__(self, options):
         self.options = options
         self.non_lin_elems = ['relay', 'dead zone', 'saturation']
-        self.transliteration = transliteration
 
     def pretify(self, str):
         return re.sub(r'^([a-zёа-я])', lambda tmp: tmp.group().upper(), str.lower())
@@ -279,52 +250,22 @@ sig_template = {
     },
 }
 
-transliteration = {
-    'signal': {
-        'sin': {
-            'name': 'синусоида',
-            'case': 'синусоиды',
-        },
-        'meandr': {
-            'name': 'меандр',
-            'case': 'меандра',
-        },
-        'sawtooth': {
-            'name': 'пила',
-            'case': 'пилы',
-        },
-    },
-    'non_lin_elem': {
-        'relay': {
-            'name': 'идеальное реле',
-            'case': 'идеального реле',
-        },
-        'dead_zone': {
-            'name': 'мёртвая зона',
-            'case': 'мёртвой зоны',
-        },
-        'saturation': {
-            'name': 'насыщение',
-            'case': 'насыщения',
-        },
-    },
-}
-
-sig = Signal(variant, sig_template)
-
-utility = Utility(options, transliteration)
-
-sig.getParams()
-
-sig.getTestVector()
-sig.getSignals()
-
 params = {
     'data': None,
     'figure_name': '{} and its spectre',
     'title': '{}',
     'spectre_title': '{} spectre',
 }
+
+sig = Signal(variant, sig_template)
+
+utility = Utility(options)
+
+sig.getParams()
+
+sig.getTestVector()
+sig.getSignals()
+
 
 utility.getSignalPlots(sig, params)
 utility.getNonLinearPlots(sig)
