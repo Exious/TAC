@@ -97,6 +97,15 @@ class Signal:
         if(non_lin_type == 'saturation'):
             return saturation
 
+    def getSignalAfterFiltration(self):
+        B = [self.lin_param_k/(1+self.lin_param_T/self.dt)]
+        A = [1, -1/(1+self.dt/self.lin_param_T)]
+
+        def filtred(sig):
+            return signal.lfilter(B, A, sig)
+
+        return filtred
+
 
 class Utility:
     def __init__(self, options):
@@ -132,8 +141,10 @@ class Utility:
 
         plt.title(self.pretify(title))
 
-    def getSignalPlots(self, this, extra):
+    def getSignalPlots(self, this, extra, scaled_one=None):
         to_plot = ['sig', 'spec']
+        if (scaled_one is not None):
+            to_plot.insert(1, 'scaled_sig')
 
         for graph in self.options:
             options = self.options[graph]
@@ -141,10 +152,8 @@ class Utility:
             sig = [this.sig[graph]['data']]
 
             if(extra['data'] is not None):
-                additional = []
                 for func in extra['data']:
-                    additional.extend(func(sig))
-                sig.extend(additional)
+                    sig.extend([func(sig[len(sig)-1])])
 
             to_spec = sig[len(sig) - 1]
 
@@ -162,8 +171,11 @@ class Utility:
                 if(type == 'spec'):
                     self.specPlot(
                         this, to_spec, options['spec'], spectre_title)
-                else:
+                if(type == 'sig'):
                     self.signalPlot(this, sig, options['sig'], title)
+                if(type == 'scaled_sig'):
+                    self.signalPlot(
+                        this, sig, options['filtred'], 'scaled' + title)
 
     def getNonLinearPlots(self, this):
         for non_lin_elem in self.non_lin_elems:
@@ -180,6 +192,26 @@ class Utility:
             }
 
             self.getSignalPlots(this, params)
+
+            filtred = this.getSignalAfterFiltration()
+
+            params = {
+                'data': [after_non_lin_elem, filtred],
+                'figure_name': '{} after filtred ' + non_lin_elem + ' and its spectre',
+                'title': '{}, same after ' + non_lin_elem + 'and same filtred after ' + non_lin_elem,
+                'spectre_title': '{} filtred after ' + non_lin_elem + ' spectre',
+            }
+
+            self.getSignalPlots(this, params, True)
+
+            params = {
+                'data': [filtred, after_non_lin_elem],
+                'figure_name': 'filtred {} after ' + non_lin_elem + ' and its spectre',
+                'title': '{}, filtred same and filtred same after ' + non_lin_elem,
+                'spectre_title': 'filtred {} after ' + non_lin_elem + ' spectre',
+            }
+
+            self.getSignalPlots(this, params, True)
 
     def getStaticPlots(self, this, non_lin_elem, func):
         figure_name = '{} static characteristics'.format(
@@ -220,6 +252,10 @@ sig_options_template = {
         'labels': {'x': 'In', 'y': 'Out', },
         'limits': {'x': None, 'y': None, },
     },
+    'filtred': {
+        'labels': {'x': 'Time, s', 'y': 'Amplitude', },
+        'limits': {'x': [0, 0.1], 'y': [-0.05, 0.05], },
+    }
 }
 
 options = {
