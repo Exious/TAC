@@ -7,9 +7,9 @@ variant = 14  # Изменяйте ТОЛЬКО значение вариант�
 
 
 class Signal:
-    def __init__(self, variant):
+    def __init__(self, variant, sig_template):
         self.variant = variant
-        self.dt = 0.00001
+        self.dt = 0.001
         self.test_signal_start = 0
         self.test_signal_duration = 100
         self.test_sig_ampl = 1 + self.variant * 0.1
@@ -17,7 +17,14 @@ class Signal:
         self.non_lin_param_1 = 0.5 + self.variant * 0.1
         self.lin_param_k = 0.5 + self.variant * 0.3
         self.lin_param_T = 0.1 + self.variant * 0.2
-        self.sig_sin = {
+        self.sig = {
+            'sine': sig_template.copy(),
+            'meandr': sig_template.copy(),
+            'sawtooth': sig_template.copy(),
+        }
+        self.dead_zone_vec = None
+        self.saturation_vec = None
+        '''self.sig_sin = {
             'data': None,
             'after_relay': None,
             'after_dead_zone': None,
@@ -34,7 +41,7 @@ class Signal:
             'after_relay': None,
             'after_dead_zone': None,
             'after_saturation': None
-        }
+        }'''
 
     def getParams(self):
         print("Вариант номер: {}".format(self.variant))
@@ -53,15 +60,23 @@ class Signal:
         self.t = np.arange(0, self.test_signal_duration, self.dt)
 
     def getSignals(self):
-        self.getTestVector()
+        # self.getTestVector()
 
         self.phaze = self.test_sig_freq * self.t * 2 * np.pi
 
-        self.sig_sin['data'] = self.test_sig_ampl * np.sin(self.phaze)
+        self.sig['sine']['data'] = self.test_sig_ampl * np.sin(self.phaze)
+        self.sig['meandr']['data'] = self.test_sig_ampl * \
+            signal.square(self.phaze)
+        self.sig['sawtooth']['data'] = self.test_sig_ampl * \
+            signal.sawtooth(self.phaze)
+####################
+        '''self.sig_sin['data'] = self.test_sig_ampl * np.sin(self.phaze)
         self.sig_meandr['data'] = self.test_sig_ampl * \
             signal.square(self.phaze)
         self.sig_sawtooth['data'] = self.test_sig_ampl * \
-            signal.sawtooth(self.phaze)
+            signal.sawtooth(self.phaze)'''
+
+        #print(self.sig['sin']['data'], self.sig_sin['data'])
 
     def getSignalSpec(self, sig):
         sig_spec = np.abs(np.fft.fft(sig))
@@ -69,7 +84,7 @@ class Signal:
 
         return [sig_spec, freqs]
 
-    def getSignalAfterNonLinElem(self, sig):
+    def getSignalAfterNonLinElem(self, non_lin_type):
         def dead_zone_scalar(x, width=0.5):
             if np.abs(x) < width:
                 return 0
@@ -78,8 +93,9 @@ class Signal:
             else:
                 return x+width
 
-        dead_zone = np.vectorize(dead_zone_scalar, otypes=[
-            np.float64], excluded=['width'])
+        if (self.dead_zone_vec is None):
+            self.dead_zone_vec = np.vectorize(dead_zone_scalar, otypes=[
+                                              np.float64], excluded=['width'])
 
         def saturation_scalar(x, height=0.5):
             if np.abs(x) < height:
@@ -89,31 +105,40 @@ class Signal:
             else:
                 return -height
 
-        saturation = np.vectorize(saturation_scalar, otypes=[
-                                  np.float64], excluded=['hight'])
+        if (self.saturation_vec is None):
+            self.saturation_vec = np.vectorize(saturation_scalar, otypes=[
+                                               np.float64], excluded=['hight'])
 
-        sig_props = self.__dict__['sig_'+sig]
+        def relay(sig):
+            return np.sign(sig)
 
-        sig_props['after_relay'] = np.sign(sig_props['data'])
-        sig_props['after_dead_zone'] = dead_zone(
-            sig_props['data'], self.non_lin_param_1)
-        sig_props['after_saturation'] = saturation(
-            sig_props['data'], self.non_lin_param_1)
+        def dead_zone(sig):
+            return self.dead_zone_vec(sig, self.non_lin_param_1)
+
+        def saturation(sig):
+            return self.saturation_vec(sig, self.non_lin_param_1)
+
+        if(non_lin_type == 'relay'):
+            return relay
+        if(non_lin_type == 'dead zone'):
+            return dead_zone
+        if(non_lin_type == 'saturation'):
+            return saturation
 
 
 class Utility:
-    def __init__(self, signals, transliteration):
-        self.signals = signals
-        self.non_lin_elems = ['relay', 'dead_zone', 'saturation']
+    def __init__(self, options, transliteration):
+        self.options = options
+        self.non_lin_elems = ['relay', 'dead zone', 'saturation']
         self.transliteration = transliteration
 
     def pretify(self, str):
         return re.sub(r'^([a-zёа-я])', lambda tmp: tmp.group().upper(), str.lower())
 
-    def signalPlot(self, this, sig, options, title):
+    def signalPlot(self, this, sigs, options, title):
         self.getPlotDetails(options, title)
-
-        plt.plot(this.t, sig)
+        for sig in sigs:
+            plt.plot(this.t, sig)
 
     def specPlot(self, this, sig, options, title):
         sig_spec, freqs = this.getSignalSpec(sig)
@@ -136,126 +161,121 @@ class Utility:
 
         plt.title(self.pretify(title))
 
-    def getSignalPlots(self, this, non_lin_elem=None):
+    def getSignalPlots(self, this, extra):
         to_plot = ['sig', 'spec']
 
-        for graph in self.signals:
-            options = self.signals[graph]
+        for graph in self.options:
+            options = self.options[graph]
 
-            sig = this.__dict__['sig_'+graph]['data']
+            sig = [this.sig[graph]['data']]
 
-            if(non_lin_elem is None):
-                figure_name = '{} и её спектр'.format(
-                    self.pretify(self.transliteration['signal'][graph]['name']))
-                to_spec = sig
-            else:
-                sig_after_non_lim = this.__dict__[
-                    'sig_'+graph]['after_'+non_lin_elem]
-                figure_name = 'График {} и отклика на него {}. Спектр сигнала'.format(
-                    self.transliteration['signal'][graph]['case'],
-                    self.transliteration['non_lin_elem'][non_lin_elem]['case'])
-                to_spec = sig_after_non_lim
+            if(extra['data'] is not None):
+                additional = []
+                for func in extra['data']:
+                    additional.extend(func(sig))
+                sig.extend(additional)
 
-            plt.figure(figure_name)
+            to_spec = sig[len(sig) - 1]
+
+            figure_name = extra['figure_name'].format(graph)
+            spectre_title = extra['spectre_title'].format(graph)
+            title = extra['title'].format(graph)
+
+            plt.figure(self.pretify(figure_name))
 
             for type in to_plot:
                 plt.subplot(len(to_plot), 1,
                             to_plot.index(type) + 1)
                 plt.grid()
+
                 if(type == 'spec'):
-                    if(non_lin_elem is None):
-                        title = 'Спектр {}'.format(
-                            self.transliteration['signal'][graph]['case'])
-                    else:
-                        title = 'Спектр {} после {}'.format(self.transliteration['signal'][graph]['case'],
-                                                            self.transliteration['non_lin_elem'][non_lin_elem]['case'])
-                    self.specPlot(this, to_spec, options['spec'], title)
+                    self.specPlot(
+                        this, to_spec, options['spec'], spectre_title)
                 else:
-                    if(non_lin_elem is None):
-                        title = self.pretify(
-                            self.transliteration['signal'][graph]['name'])
-                    else:
-                        title = self.pretify('{} до и после {}'.format(self.transliteration['signal'][graph]['name'],
-                                                                       self.transliteration['non_lin_elem'][non_lin_elem]['case']))
                     self.signalPlot(this, sig, options['sig'], title)
-                    if(non_lin_elem is not None):
-                        plt.plot(this.t, sig_after_non_lim)
 
     def getNonLinearPlots(self, this):
         for non_lin_elem in self.non_lin_elems:
+            after_non_lin_elem = this.getSignalAfterNonLinElem(non_lin_elem)
+
             self.getStaticPlots(
-                this, 'Статическая характеристика {} от {} на входе', non_lin_elem)
-            self.getSignalPlots(this, non_lin_elem)
+                this, non_lin_elem, after_non_lin_elem)
 
-    def getStaticPlots(self, this, title, non_lin_type):
-        non_lin_type_translit = self.transliteration['non_lin_elem'][non_lin_type]['case']
-        plt.figure('Статическая характеристика {}'.format(
-            non_lin_type_translit))
+            params = {
+                'data': [after_non_lin_elem],
+                'figure_name': '{} after ' + non_lin_elem + ' and its spectre ',
+                'title': '{} and its result after ' + non_lin_elem,
+                'spectre_title': '{} after ' + non_lin_elem + ' spectre',
+            }
 
-        for sig in self.signals:
-            this.getSignalAfterNonLinElem(sig)
-            sig_props = this.__dict__['sig_'+sig]
+            self.getSignalPlots(this, params)
 
-            plt.subplot(len(self.signals), 1,
-                        list(self.signals).index(sig) + 1)
+    def getStaticPlots(self, this, non_lin_elem, func):
+        figure_name = '{} static characteristics'.format(
+            non_lin_elem)
+        plt.figure(self.pretify(figure_name))
+
+        for graph in self.options:
+            sig_props = this.sig[graph]['data']
+
+            sig_after_non_lin = func(
+                sig_props)
+
+            plt.subplot(len(self.options), 1,
+                        list(self.options).index(graph) + 1)
             plt.grid()
 
+            title = '{} static characteristic with a {} at the entrance'.format(
+                non_lin_elem, graph)
+
             self.getPlotDetails(
-                self.signals[sig]['static'],
-                title.format(
-                    self.transliteration['non_lin_elem'][non_lin_type]['case'],
-                    self.transliteration['signal'][sig]['case']
-                ))
+                self.options[graph]['static'],
+                self.pretify(title))
 
-            plt.plot(sig_props['data'],
-                     sig_props['after_'+non_lin_type])
+            plt.plot(sig_props, sig_after_non_lin)
 
 
-sin_options = {
-    'signal_name': 'sin',
+sig_options_template = {
+    'signal_name': None,
     'sig': {
-        'labels': {'x': 'Время, с', 'y': 'Амплитуда', },
+        'labels': {'x': 'Time, s', 'y': 'Amplitude', },
         'limits': {'x': [0, 0.15], 'y': None, },
     },
     'spec': {
-        'labels': {'x': 'Частота, Гц', 'y': None, },
+        'labels': {'x': 'Frequency, Hz', 'y': None, },
         'limits': {'x': [-1500, 1500], 'y': None, },
     },
     'static': {
-        'labels': {'x': 'Вход', 'y': 'Выход', },
+        'labels': {'x': 'In', 'y': 'Out', },
         'limits': {'x': None, 'y': None, },
     },
 }
 
-meandr_options = {
-    'signal_name': 'meandr',
-    'sig': {
-        'labels': {'x': 'Время, с', 'y': 'Амплитуда', },
-        'limits': {'x': [0, 0.15], 'y': None, },
-    },
-    'spec': {
-        'labels': {'x': 'Частота, Гц', 'y': None, },
-        'limits': {'x': [-1500, 1500], 'y': None, },
-    },
-    'static': {
-        'labels': {'x': 'Вход', 'y': 'Выход', },
-        'limits': {'x': None, 'y': None, },
-    },
+options = {
+    'sine': sig_options_template.copy(),
+    'meandr': sig_options_template.copy(),
+    'sawtooth': sig_options_template.copy(),
 }
 
-sawtooth_options = {
-    'signal_name': 'sawtooth',
-    'sig': {
-        'labels': {'x': 'Время, с', 'y': 'Амплитуда', },
-        'limits': {'x': [0, 0.15], 'y': None, },
-    },
-    'spec': {
-        'labels': {'x': 'Частота, Гц', 'y': None, },
-        'limits': {'x': [-1500, 1500], 'y': None, },
-    },
-    'static': {
-        'labels': {'x': 'Вход', 'y': 'Выход', },
-        'limits': {'x': None, 'y': None, },
+sig_template = {
+    'data': None,
+    'relay': None,
+    'dead_zone': None,
+    'saturation': None,
+    'filtration': {
+        'data': None,
+        'relay': {
+            'after': None,
+            'reversed': None
+        },
+        'dead_zone': {
+            'after': None,
+            'reversed': None
+        },
+        'saturation': {
+            'after': None,
+            'reversed': None
+        },
     },
 }
 
@@ -290,19 +310,23 @@ transliteration = {
     },
 }
 
-sig = Signal(variant)
+sig = Signal(variant, sig_template)
 
-utility = Utility(
-    {
-        'sin': sin_options,
-        'meandr': meandr_options,
-        'sawtooth': sawtooth_options,
-    }, transliteration)
+utility = Utility(options, transliteration)
 
 sig.getParams()
+
+sig.getTestVector()
 sig.getSignals()
 
-utility.getSignalPlots(sig)
+params = {
+    'data': None,
+    'figure_name': '{} and its spectre',
+    'title': '{}',
+    'spectre_title': '{} spectre',
+}
+
+utility.getSignalPlots(sig, params)
 utility.getNonLinearPlots(sig)
 
 plt.show()
