@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from scipy import signal
 import re
+import os
 
 variant = 14  # Изменяйте ТОЛЬКО значение варианта
 
@@ -115,6 +116,18 @@ class Utility:
     def pretify(self, str):
         return re.sub(r'^([a-zёа-я])', lambda tmp: tmp.group().upper(), str.lower())
 
+    def renameImage(self, str):
+        return '-'.join(str.split())
+
+    def saveFile(self, figure, figure_name):
+        path = './LaTeX/body/images/' + \
+            self.renameImage(figure_name) + '.png'
+
+        if(os.path.isfile(path)):
+            os.remove(path)
+
+        figure.savefig(path)
+
     def signalPlot(self, this, sigs, options, title):
         self.getPlotDetails(options, title)
         for sig in sigs:
@@ -161,7 +174,7 @@ class Utility:
             spectre_title = extra['spectre_title'].format(graph)
             title = extra['title'].format(graph)
 
-            plt.figure(self.pretify(figure_name))
+            figure = plt.figure(self.pretify(figure_name))
 
             for type in to_plot:
                 plt.subplot(len(to_plot), 1,
@@ -176,6 +189,8 @@ class Utility:
                 if(type == 'scaled_sig'):
                     self.signalPlot(
                         this, sig, options['filtred'], 'scaled' + title)
+
+            self.saveFile(figure, figure_name)
 
     def getNonLinearPlots(self, this):
         for non_lin_elem in self.non_lin_elems:
@@ -216,7 +231,8 @@ class Utility:
     def getStaticPlots(self, this, non_lin_elem, func):
         figure_name = '{} static characteristics'.format(
             non_lin_elem)
-        plt.figure(self.pretify(figure_name))
+
+        figure = plt.figure(self.pretify(figure_name))
 
         for graph in self.options:
             sig_props = this.sig[graph]['data']
@@ -236,6 +252,8 @@ class Utility:
                 self.pretify(title))
 
             plt.plot(sig_props, sig_after_non_lin)
+
+        self.saveFile(figure, figure_name)
 
 
 sig_options_template = {
