@@ -1,0 +1,34 @@
+\babel@toc {russian}{}
+\contentsline {section}{\numberline {1}Цель работы}{3}{section.1}%
+\contentsline {section}{\numberline {2}Задание на лабораторную работу}{3}{section.2}%
+\contentsline {section}{\numberline {3}Основные теоретические положения}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Пробные сигналы}{3}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Синусоида}{3}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Меандр}{4}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Пила}{5}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}Типовые нелинейные звенья}{5}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Идеальное реле (знак)}{5}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Мертвая зона}{6}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Усилитель с насыщением}{7}{subsubsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.3}Фильтрация сигнала}{8}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Построение спектра сигналов}{8}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Обработка результатов эксперимента}{8}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Пробные сигналы}{9}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Статические характеристики нелинейностей}{10}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Статические характеристики \textquotedblleft Идеального реле\textquotedblright }{10}{subsubsection.4.2.1}%
+\contentsline {subsubsection}{\numberline {4.2.2}Статические характеристики нелинейности \textquotedblleft Мёртвая зона\textquotedblright }{11}{subsubsection.4.2.2}%
+\contentsline {subsubsection}{\numberline {4.2.3}Статические характеристики нелинейности \textquotedblleft Насыщение\textquotedblright }{12}{subsubsection.4.2.3}%
+\contentsline {subsection}{\numberline {4.3}Получение откликов типовых нелинейных звеньев на пробные сигналы. Получение спектров откликов}{13}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Нелинейность \textquotedblleft Идеальное реле\textquotedblright }{13}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Нелинейность \textquotedblleft Мёртвая зона\textquotedblright }{15}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}Нелинейность \textquotedblleft Насыщение\textquotedblright }{17}{subsubsection.4.3.3}%
+\contentsline {subsubsection}{\numberline {4.3.4}Выводы}{19}{subsubsection.4.3.4}%
+\contentsline {subsection}{\numberline {4.4}Получение откликов линейного звена на преобразованный нелинейным звеном сигнал. Получение спектров откликов}{20}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Получение откликов линейного звена на преобрзаованный нелинейностью \textquotedblleft Идеальное реле\textquotedblright \ сигнал. Получение спектров откликов}{20}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}Получение откликов линейного звена на преобразованный нелинейностью \textquotedblleft Мёртвая зона\textquotedblright \ сигнал. Получение спектров откликов}{23}{subsubsection.4.4.2}%
+\contentsline {subsubsection}{\numberline {4.4.3}Получение откликов линейного звена на преобразованный нелинейностью \textquotedblleft Насыщение\textquotedblright \ сигнал. Получение спектров откликов}{26}{subsubsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.5}Получение откликов нелинейного звена на преобразованный линейным звеном сигнал. Получение спектров откликов}{29}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Получение откликов нелинейности \textquotedblleft Идеальное реле\textquotedblright \ преобразованный линейным звеном сигнал. Получение спектров откликов}{29}{subsubsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.2}Получение откликов нелинейности \textquotedblleft Мёртвая зона\textquotedblright \ преобразованный линейным звеном сигнал. Получение спектров откликов}{32}{subsubsection.4.5.2}%
+\contentsline {subsubsection}{\numberline {4.5.3}Получение откликов нелинейности \textquotedblleft Насыщение\textquotedblright \ преобразованный линейным звеном сигнал. Получение спектров откликов}{35}{subsubsection.4.5.3}%
+\contentsline {section}{\numberline {5}Выводы}{38}{section.5}%
