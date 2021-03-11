@@ -10,7 +10,7 @@ variant = 14  # Изменяйте ТОЛЬКО значение вариант�
 class Signal:
     def __init__(self, variant, sig_template):
         self.variant = variant
-        self.dt = 0.001
+        self.dt = 0.00001
         self.test_signal_start = 0
         self.test_signal_duration = 100
         self.test_sig_ampl = 1 + self.variant * 0.1
@@ -156,8 +156,14 @@ class Utility:
 
     def getSignalPlots(self, this, extra, scaled_one=None):
         to_plot = ['sig', 'spec']
+
         if (scaled_one is not None):
             to_plot.insert(1, 'scaled_sig')
+
+        if(len(to_plot) == 3):
+            h_space = 1
+        else:
+            h_space = 0.45
 
         for graph in self.options:
             options = self.options[graph]
@@ -179,6 +185,7 @@ class Utility:
             for type in to_plot:
                 plt.subplot(len(to_plot), 1,
                             to_plot.index(type) + 1)
+                plt.subplots_adjust(hspace=h_space)
                 plt.grid()
 
                 if(type == 'spec'):
@@ -242,6 +249,7 @@ class Utility:
 
             plt.subplot(len(self.options), 1,
                         list(self.options).index(graph) + 1)
+            plt.subplots_adjust(hspace=1)
             plt.grid()
 
             title = '{} static characteristic with a {} at the entrance'.format(
