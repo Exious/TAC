@@ -87,10 +87,13 @@ class FazePortrait2D:
 
 class FazePortrait3D(FazePortrait2D):
     def __init__(self, sigma, r, b):
+        self.sigma = sigma
+        self.r = r
+        self.b = b
         self.args = (sigma, r, b)
-        self.x_stroke = 'x'
-        self.y_stroke = 'y'
-        self.z_stroke = 'z'
+        self.x_stroke = 'sigma*(y-x)'
+        self.y_stroke = 'x*(r-z)-y'
+        self.z_stroke = 'x*y-b*z'
         self.deltaX = 4
         self.deltaY = 4
         self.deltaZ = 4
@@ -131,6 +134,10 @@ class FazePortrait3D(FazePortrait2D):
 
     def draw(self, name):
         figure = plt.figure(name)
+        spacing = 0.5
+        plt.subplots_adjust(hspace=spacing, wspace=spacing)
+
+        self.args = (self.sigma, self.r, eval(self.b))
 
         ax = figure.add_subplot(2, 2, 1, projection='3d')
         ax.set_title("3D")
@@ -172,7 +179,7 @@ class Utility:
         return '-'.join(name.split())
 
     def saveFile(figure, figure_name):
-        path = './images/' + \
+        path = './LaTeX/body/images/' + \
             Utility.renameImage(figure_name) + '.png'
 
         if(os.path.isfile(path)):

@@ -57,7 +57,8 @@ for task in data:
 
     if task == '5':
 
-        fazePortrait3D.changeParams(params)
-        fazePortrait3D.draw('Lorenz attractor')
+        for param in params:
+            fazePortrait3D.changeParams(params[param])
+            fazePortrait3D.draw('Lorenz attractor type ' + param)
 
 plt.show()
