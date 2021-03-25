@@ -1,0 +1,19 @@
+\babel@toc {russian}{}
+\contentsline {section}{\numberline {1}Цель работы}{3}{section.1}%
+\contentsline {section}{\numberline {2}Задание на лабораторную работу}{3}{section.2}%
+\contentsline {section}{\numberline {3}Основные теоретические положения}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Осциллятор Ван дер Поля}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Аттрактор Лоренца (3 порядок)}{4}{subsection.3.2}%
+\contentsline {section}{\numberline {4}Обработка результатов эксперимента}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Изучение фазовых портретов типовых особых точек}{5}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Система 1 - Особая точка \textquotedblleft Устойчивый узел\textquotedblright }{5}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Система 2 - Особая точка \textquotedblleft Неустойчивый узел\textquotedblright }{6}{subsubsection.4.1.2}%
+\contentsline {subsubsection}{\numberline {4.1.3}Система 3 - Особая точка \textquotedblleft Седло\textquotedblright }{8}{subsubsection.4.1.3}%
+\contentsline {subsubsection}{\numberline {4.1.4}Система 4 - Особая точка \textquotedblleft Устойчивый фокус\textquotedblright }{9}{subsubsection.4.1.4}%
+\contentsline {subsubsection}{\numberline {4.1.5}Система 5 - Особая точка \textquotedblleft Неустойчивый фокус\textquotedblright }{11}{subsubsection.4.1.5}%
+\contentsline {subsubsection}{\numberline {4.1.6}Система 6 - Особая точка \textquotedblleft Центр\textquotedblright }{12}{subsubsection.4.1.6}%
+\contentsline {subsection}{\numberline {4.2}Построение фазовых портретов для нелинейных систем}{14}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Построение фазового портрета для маятника}{15}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Построение фазового портрета осциллятора Ван дер Поля}{17}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Построение фазового портрета аттрактора Лоренца (3 порядок)}{18}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Выводы}{21}{section.5}%
