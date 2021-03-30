@@ -4,6 +4,8 @@
       "non-linear": {
         "x_stroke": "-4*x+0.1*variant*x*x-4*y",
         "y_stroke": "1.5*x+y-0.2*variant*y*y*y",
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -6,
         "stopX": 7,
         "startDX": -6,
@@ -11,17 +13,31 @@
         "ts": 0.1
       },
       "linear": {
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -4,
         "stopX": 5,
         "startDX": -4,
         "stopDX": 5,
         "ts": 0.5
+      },
+      "non-linear-dot": {
+        "deltaX": 0.1,
+        "deltaDX": 0.1,
+        "startX": -0.5,
+        "stopX": 0.5,
+        "startDX": -0.5,
+        "stopDX": 0.5,
+        "ts": 0.1,
+        "nt": 101
       }
     },
     "2": {
       "non-linear": {
         "x_stroke": "x+0.5*y-0.1*variant*y*y",
         "y_stroke": "0.5*x-0.2*variant*x*x+y",
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -3,
         "stopX": 8,
         "startDX": -4,
@@ -29,17 +45,31 @@
         "ts": 0.1
       },
       "linear": {
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -6,
         "stopX": 7,
         "startDX": -6,
         "stopDX": 7,
         "ts": 1
+      },
+      "non-linear-dot": {
+        "deltaX": 0.1,
+        "deltaDX": 0.1,
+        "startX": -0.5,
+        "stopX": 0.5,
+        "startDX": -0.5,
+        "stopDX": 0.5,
+        "ts": 0.1,
+        "nt": 101
       }
     },
     "3": {
       "non-linear": {
         "x_stroke": "2*x+0.2*variant*x*x+y-0.1*variant*y*y",
         "y_stroke": "x-3*y",
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -8,
         "stopX": 8,
         "startDX": -6,
@@ -47,17 +77,31 @@
         "ts": 0.035
       },
       "linear": {
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -5,
         "stopX": 6,
         "startDX": -5,
         "stopDX": 6,
         "ts": 0.75
+      },
+      "non-linear-dot": {
+        "deltaX": 0.1,
+        "deltaDX": 0.1,
+        "startX": -0.5,
+        "stopX": 0.5,
+        "startDX": -0.5,
+        "stopDX": 0.5,
+        "ts": 0.1,
+        "nt": 101
       }
     },
     "4": {
       "non-linear": {
         "x_stroke": "-0.1*variant*x*x+2*y",
         "y_stroke": "-3*x-y",
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -3,
         "stopX": 10,
         "startDX": -6,
@@ -65,17 +109,31 @@
         "ts": 0.15
       },
       "linear": {
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -3,
         "stopX": 3,
         "startDX": -4,
         "stopDX": 7,
         "ts": 1.5
+      },
+      "non-linear-dot": {
+        "deltaX": 0.1,
+        "deltaDX": 0.1,
+        "startX": -0.5,
+        "stopX": 0.5,
+        "startDX": -0.5,
+        "stopDX": 0.5,
+        "ts": 0.1,
+        "nt": 101
       }
     },
     "5": {
       "non-linear": {
         "x_stroke": "0.1*x-4*y",
         "y_stroke": "4*x-0.2*variant*x*x+0.1*y",
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -5,
         "stopX": 8,
         "startDX": -5,
@@ -83,17 +141,31 @@
         "ts": 0.1
       },
       "linear": {
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -5,
         "stopX": 6,
         "startDX": -5,
         "stopDX": 6,
         "ts": 0.5
+      },
+      "non-linear-dot": {
+        "deltaX": 0.1,
+        "deltaDX": 0.1,
+        "startX": -0.5,
+        "stopX": 0.5,
+        "startDX": -0.5,
+        "stopDX": 0.5,
+        "ts": 0.1,
+        "nt": 1001
       }
     },
     "6": {
       "non-linear": {
         "x_stroke": "x-0.1*variant*x*x-4*y+0.3*variant*y*y",
         "y_stroke": "2*x+0.2*variant*x*x-y-0.3*variant*y*y*y",
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -3,
         "stopX": 10,
         "startDX": -6,
@@ -101,11 +173,23 @@
         "ts": 0.1
       },
       "linear": {
+        "deltaX": 1,
+        "deltaDX": 1,
         "startX": -3,
         "stopX": 5,
         "startDX": -3,
         "stopDX": 5,
         "ts": 2.5
+      },
+      "non-linear-dot": {
+        "deltaX": 0.1,
+        "deltaDX": 0.1,
+        "startX": -0.5,
+        "stopX": 0.5,
+        "startDX": -0.5,
+        "stopDX": 0.5,
+        "ts": 0.1,
+        "nt": 101
       }
     }
   },
@@ -134,7 +218,8 @@
     "stopX": 4,
     "startDX": -5,
     "stopDX": 10,
-    "ts": 0.5
+    "ts": 1000,
+    "nt": 250001
   },
   "5": {
     "1": {

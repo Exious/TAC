@@ -1,8 +1,9 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.integrate import odeint
 from scipy import constants
-import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from sympy import *
 import re
 import os
 
@@ -63,12 +64,21 @@ class FazePortrait2D:
         sol = odeint(self.ode, y0, t, self.args)
         return sol
 
-    def draw(self, name):
+    def draw(self, name, extra_dot=None):
         figure = plt.figure(name)
-        for y0 in range(self.startX, self.stopX, self.deltaX):
-            for dy0 in range(self.startDX, self.stopDX, self.deltaDX):
+        ax = figure.add_subplot()
+
+        for y0 in np.arange(self.startX, self.stopX, self.deltaX):
+            for dy0 in np.arange(self.startDX, self.stopDX, self.deltaDX):
                 sol = self.calcODE(y0, dy0)
-                plt.plot(sol[:, 0], sol[:, 1], 'b')
+                ax.plot(sol[:, 0], sol[:, 1], 'b')
+
+        if (extra_dot is not None):
+            circle = plt.Circle(
+                extra_dot['dot'], extra_dot['radial'], color='r')
+
+            ax.add_patch(circle)
+
         plt.xlabel('x')
         plt.ylabel('dx/dt')
         plt.grid()
@@ -83,6 +93,36 @@ class FazePortrait2D:
         for stroke in {'x_stroke', 'y_stroke'}:
             self.__dict__[stroke] = re.sub(
                 r'(\*[xy]){2,}', '*0', self.__dict__[stroke])
+
+    def getAllDots(self, params):
+        x_stroke = params['x_stroke'].replace(
+            'variant', str(self.variant))
+        y_stroke = params['y_stroke'].replace(
+            'variant', str(self.variant))
+
+        sympy_eq_x = sympify("Eq(" + x_stroke + ", 0)")
+        sympy_eq_y = sympify("Eq(" + y_stroke + ", 0)")
+
+        x, y = symbols('x,y')
+
+        sol = solve([sympy_eq_x, sympy_eq_y], [x, y])
+        soln = [tuple(v.evalf() for v in s if v.is_real) for s in sol]
+
+        dots = [value for value in soln if value]
+        dots.remove((0, 0))
+
+        return dots
+
+    def shiftParams(self, dot, params):
+        dimension_list = {0: 'X',  1: 'DX'}
+        shift_list = ('start', 'stop')
+
+        for shift in shift_list:
+            for dimension in dimension_list:
+                params[shift+dimension_list[dimension]] = params[shift +
+                                                                 dimension_list[dimension]] + dot[dimension]
+
+        return params
 
 
 class FazePortrait3D(FazePortrait2D):

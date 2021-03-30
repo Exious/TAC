@@ -1,7 +1,7 @@
-import re
 from fazePortraits import FazePortrait2D, FazePortrait3D, Utility
 import matplotlib.pyplot as plt
 import json
+from sympy import *
 
 variant = 14
 
@@ -19,11 +19,29 @@ for task in data:
     if task == '1':
 
         for param in params:
-            fazePortrait2D.changeParams(params[param]['non-linear'])
+            non_linear_params = params[param]['non-linear']
+            linear_params = params[param]['linear']
+            non_linear_dot_params = params[param]['non-linear-dot']
+
+            fazePortrait2D.changeParams(non_linear_params)
             fazePortrait2D.draw('System ' + param)
 
+            dots = fazePortrait2D.getAllDots(non_linear_params)
+
+            for dot in dots:
+                print('Additional stability dot for system {} is {}'.format(param, dot))
+
+                figure_name = 'System ' + param + \
+                    ' additional stability dot №' + str(dots.index(dot)+1)
+                dot_params = non_linear_dot_params.copy()
+
+                dot_params = fazePortrait2D.shiftParams(dot, dot_params)
+
+                fazePortrait2D.changeParams(dot_params)
+                fazePortrait2D.draw(figure_name, {'dot': dot, 'radial': 0.01})
+
             fazePortrait2D.linearize()
-            fazePortrait2D.changeParams(params[param]['linear'])
+            fazePortrait2D.changeParams(linear_params)
             fazePortrait2D.draw('Linearized system ' + param)
 
     if task == '2':
