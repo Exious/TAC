@@ -1,10 +1,12 @@
+from Data import params
 from scipy import optimize
 from scipy import integrate
 from scipy.integrate import odeint
 import numpy as np
 
+
 class ParameterEstimator():
-    def __init__(self, experiments,to_estimate_init_values, f):
+    def __init__(self, experiments, to_estimate_init_values, f):
         """
         experiments -- список кортежей с данными экспериментов в формате [x_data, y_data] (вход, выход)
         f -- функция, реализующая дифференциальное уравнение модели
@@ -17,7 +19,7 @@ class ParameterEstimator():
         self._f = f
         # Предполагаем, что все переменные состояния наблюдаемые, однако в общем случае это не так
         x_data, y_data = experiments[0]
-        self.n_observed = 1 # y_data.shape[1]
+        self.n_observed = params['numeric']['n_observed']  # y_data.shape[1]
 
     def my_ls_func(self, x, teta):
         """
@@ -36,7 +38,7 @@ class ParameterEstimator():
                              teta[0:self._y0_len], x)
         # Возвращаем только наблюдаемые переменные
         return r[:, 0:self.n_observed]
-    
+
     def estimate_ode(self):
         """
         Произвести оценку параметров дифференциального уравнения с заданными
@@ -58,27 +60,19 @@ class ParameterEstimator():
         Функция для передачи в optimize.leastsq
         При дальнейших вычислениях значения, возвращаемые этой функцией,
         будут возведены в квадрат и просуммированы.
-                
+
         """
         delta = []
         # Получаем ошибку для всех экспериментов при заданных параметрах модели
         for data in self._experiments:
             x_data, y_data = data
             d = y_data - self.my_ls_func(x_data, p)
-            d = d.flatten() 
+            d = d.flatten()
             delta.append(d)
         delta = np.array(delta)
-        
+
         return delta.flatten()  # Преобразуем в одномерный массив
-    
-    def calcODE(self, args, y0, x0=0, xEnd=10, nt=1001):
-        """
-        Служебная функция для решения ДУ
-        """
-        t = np.linspace(x0, xEnd, nt)
-        sol = odeint(self._f, y0, t, args)
-        return sol, t
-    
+
     def estimate_param(self, guess):
         """
         Произвести оценку параметров ДУ
@@ -89,7 +83,7 @@ class ParameterEstimator():
         res = optimize.least_squares(self.f_resid, self._est_values)
         return res.x
 
-    def get_ideal_solution(self,func):
+    def get_ideal_solution(self, func):
         est_par = self.estimate_ode()
 
         self.args, self.y0 = est_par
@@ -98,7 +92,7 @@ class ParameterEstimator():
         print("Estimated initial condition: {}".format(self.y0))
 
         [[t, sol]] = self._experiments
-        
+
         sol_ideal = odeint(func, self.y0, t, (self.args,))
 
         return sol_ideal

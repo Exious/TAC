@@ -60,7 +60,7 @@ def model_and_analyzing():
     analyze(guess, y0, ode_lin)
 
 
-obj = RealObject(variant)
+obj = RealObject()
 
 object_free_movements()
 monoharm_u = return_monoharm_u()

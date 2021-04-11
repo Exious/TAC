@@ -1,0 +1,14 @@
+{
+    "ideal": {
+        "guess": "1.1 0.25 1.75 2.2",
+        "initial_condition": "1" 
+    },
+    "linear": {
+        "guess": "0.2 0.3",
+        "initial_condition": "0" 
+    },
+    "non-linear": {
+        "guess": "0.2 0.3",
+        "initial_condition": "0" 
+    }
+}

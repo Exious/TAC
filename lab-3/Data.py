@@ -4,32 +4,31 @@ import json
 
 class Data:
     def __init__(self):
-        self.paths = ['numeric', 'models']
-        #self.paths = ['numeric']
         self.format = '.json'
+
+        paths = []
+
+        for file in os.listdir("."):
+            if file.endswith(self.format):
+                print(file)
+                #print(os.path.join("/mydir", file))
+
+        files = list(filter(lambda file: file.endswith(self.format), [
+            file for file in os.listdir(".")]))
+        print(files, type(files))
+        self.paths = [file.replace(self.format, '') for file in files]
+        print('--', self.paths)
+
+        for file in files:
+            print(file)
+
+        #self.paths = ['numeric', 'models']
         self.data = {}
         self.raw_data = {}
-
-        #self.numeric_keys = None
-        #self.models_keys = None
-
         self.variant = None
-        self.lin_par_1 = None
-        self.lin_par_2 = None
-        self.nonlin_par_1 = None
-        self.nonlin_par_2 = None
-        self.nonlin_type = None
-        self.duration = None
-        self.discretization = None
-        self.initial_condition = None
-        self.default_initial_condition = None
-        self.n_observed = None
 
     def read(self):
         for path in self.paths:
-
-            #raw_data = self.raw_data
-            #print(raw_data, path)
             self.raw_data.update({path: None})
 
             with open(path + self.format, 'r', encoding='utf-8') as readfile:
@@ -51,12 +50,8 @@ class Data:
         if raw_data is None:
             raw_data = self.raw_data
 
-        print(to_save, raw_data)
         for stroke in raw_data:
-            print(stroke)
             for substroke in raw_data[stroke]:
-                print(substroke, to_save[stroke][substroke])
-
                 if not isinstance(raw_data[stroke][substroke], dict):
                     if 'self.variant' in raw_data[stroke][substroke]:
                         to_save[stroke][substroke] = eval(
@@ -64,7 +59,7 @@ class Data:
                     else:
                         splitted = raw_data[stroke][substroke].split(' ')
 
-                        if len(splitted) is not 1:
+                        if len(splitted) != 1:
                             to_save[stroke][substroke] = splitted
                         else:
                             to_save[stroke][substroke] = eval(
@@ -73,24 +68,12 @@ class Data:
                     self.saveData(to_save[stroke],
                                   raw_data[stroke])
 
-        print(self.data)
+        return self
 
     def return_data(self):
-        #data = {}
-        # for stroke in self.numeric_keys:
-        #    data[stroke] = self.__dict__[stroke]
-
         return self.data
 
 
 data = Data()
 
-data.saveData()
-
-params = data.return_data()
-
-print('-------------------------------------')
-print(params)
-print('-------------------------------------')
-
-# print(data)
+params = data.saveData().return_data()
