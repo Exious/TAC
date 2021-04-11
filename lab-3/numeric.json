@@ -4,7 +4,7 @@
     "lin_par_1":"self.variant % 10 * 0.2",
     "lin_par_2":"((32-self.variant) % 9 + 0.1) * 2.5",
     "nonlin_par_1":"self.variant % 15 * 0.35",
-    "nonlin_par_2":"self.variant % 15 * 0.35",
+    "nonlin_par_2":"self.variant % 15 * 0.45",
     "nonlin_type":"self.variant % 3",
     "start_time": "0",
     "duration": "10",

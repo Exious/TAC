@@ -1,28 +1,17 @@
 import os
 import json
 
+from sympy.core.sympify import sympify
+
 
 class Data:
     def __init__(self):
         self.format = '.json'
 
-        paths = []
-
-        for file in os.listdir("."):
-            if file.endswith(self.format):
-                print(file)
-                #print(os.path.join("/mydir", file))
-
         files = list(filter(lambda file: file.endswith(self.format), [
             file for file in os.listdir(".")]))
-        print(files, type(files))
+
         self.paths = [file.replace(self.format, '') for file in files]
-        print('--', self.paths)
-
-        for file in files:
-            print(file)
-
-        #self.paths = ['numeric', 'models']
         self.data = {}
         self.raw_data = {}
         self.variant = None
@@ -60,10 +49,14 @@ class Data:
                         splitted = raw_data[stroke][substroke].split(' ')
 
                         if len(splitted) != 1:
-                            to_save[stroke][substroke] = splitted
+                            to_save[stroke][substroke] = list(
+                                float(item) for item in splitted)
                         else:
-                            to_save[stroke][substroke] = eval(
-                                raw_data[stroke][substroke])
+                            if '_' in raw_data[stroke][substroke]:
+                                to_save[stroke][substroke] = raw_data[stroke][substroke]
+                            else:
+                                to_save[stroke][substroke] = eval(
+                                    raw_data[stroke][substroke])
                 else:
                     self.saveData(to_save[stroke],
                                   raw_data[stroke])

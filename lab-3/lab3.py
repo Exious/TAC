@@ -1,10 +1,10 @@
+from Data import params
 from ParameterEstimator import ParameterEstimator
 from Plotter import Plotter
 from RealObject import RealObject
 from SignalGenerator import SignalGenerator
 import matplotlib.pyplot as plt
-
-variant = 5
+from sympy import *
 
 
 def object_free_movements():
@@ -30,17 +30,23 @@ def do_experiment():
 
 
 def model_and_analyzing():
-    def ode_lin(x, t, k):
-        y = x
-        [K, T] = k
-        u = monoharm_u(0, t)
-        dydt = (K*u-y)/T
-        return dydt
+    def ode_ideal():
+        return obj.getODE()
+
+    def ode_lin():
+        def decor(x, t, k):
+            y = x
+            [K, T] = k
+            u = monoharm_u(0, t)
+            dydt = (K*u-y)/T
+            return dydt
+
+        return decor
 
     def analyze(guess, y0, func):
         experiments = [[t, sol], ]
 
-        to_estimate_init_values = {'guess': guess, 'y0': y0}
+        to_estimate_init_values = {'guess': guess, 'y0': [y0, ]}
 
         estimator = ParameterEstimator(
             experiments, to_estimate_init_values, func)
@@ -49,15 +55,22 @@ def model_and_analyzing():
 
         Plotter.draw([t, [sol, sol_ideal]])
 
-    guess = [1.1, 0.25, 1.75, 2.2]
-    y0 = [1, ]
+    ode_func_map = {
+        'ode_ideal': ode_ideal(),
+        'ode_lin': ode_lin()
+    }
 
-    analyze(guess, y0, obj.getODE())
+    guess = params['models']['ideal']['guess']
+    y0 = params['models']['ideal']['initial_condition']
+    func = params['models']['ideal']['func']
 
-    guess = [0.2, 0.3]
-    y0 = [0, ]
+    analyze(guess, y0, ode_func_map[str(func)])
 
-    analyze(guess, y0, ode_lin)
+    guess = params['models']['linear']['guess']
+    y0 = params['models']['linear']['initial_condition']
+    func = params['models']['linear']['func']
+
+    analyze(guess, y0, ode_func_map[str(func)])
 
 
 obj = RealObject()

@@ -1,11 +1,13 @@
 {
     "ideal": {
         "guess": "1.1 0.25 1.75 2.2",
-        "initial_condition": "1" 
+        "initial_condition": "1",
+        "func": "ode_ideal"
     },
     "linear": {
         "guess": "0.2 0.3",
-        "initial_condition": "0" 
+        "initial_condition": "0",
+        "func": "ode_lin"
     },
     "non-linear": {
         "guess": "0.2 0.3",
