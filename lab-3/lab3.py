@@ -16,12 +16,14 @@ def object_free_movements():
 
 def do_experiment():
     # obj.set_u_fcn(monoharm_u)
-    obj.set_u_fcn(impulse_u)
+    # obj.set_u_fcn(impulse_u)
+    obj.set_u_fcn(meandr_u)
 
     sol, t = obj.calcODE()
 
     #u = monoharm_u(0, t)
-    u = impulse_u(0, t)
+    #u = impulse_u(0, t)
+    u = meandr_u(0, t)
 
     Plotter.draw([t, [sol, u]])
 
@@ -36,7 +38,7 @@ def model_and_analyzing():
         def decor(x, t, k):
             y = x
             [K, T] = k
-            u = monoharm_u(0, t)
+            u = meandr_u(0, t)
             dydt = (K*u-y)/T
             return dydt
 
@@ -78,6 +80,7 @@ sig = SignalGenerator()
 object_free_movements()
 monoharm_u = sig.get_u('monoharm')
 impulse_u = sig.get_u('impulse')
+meandr_u = sig.get_u('meandr')
 sol, t = do_experiment()
 model_and_analyzing()
 

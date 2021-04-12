@@ -1,4 +1,3 @@
-from numpy.lib import isin
 from Data import params
 import numpy as np
 from scipy import signal
@@ -13,6 +12,7 @@ class SignalGenerator:
         self.u = {
             'monoharm': self.monoharm_u,
             'impulse': self.impulse_u,
+            'meandr': self.meandr_u,
         }
 
     def monoharm_u(self, x, t):
@@ -25,6 +25,9 @@ class SignalGenerator:
             return [dot if np.abs(dot) > self.amplitude/2 else 0 for dot in sig]
 
         return suppression(self.amplitude * np.sinc(self.to_approximate * (t - self.shift) * 2 * np.pi))
+
+    def meandr_u(self, x, t):
+        return self.amplitude*signal.square(self.to_approximate * t * 2 * np.pi)
 
     def get_u(self, sig):
         return self.u[sig]
