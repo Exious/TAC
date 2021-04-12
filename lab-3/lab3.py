@@ -1,3 +1,4 @@
+from re import U
 from Data import params
 from ParameterEstimator import ParameterEstimator
 from Plotter import Plotter
@@ -14,15 +15,21 @@ def object_free_movements():
 
 
 def return_monoharm_u():
-    return SignalGenerator.get_monoharm_u()
+    return sig.get_monoharm_u()
+
+
+def return_impulse_u():
+    return sig.get_impulse_u()
 
 
 def do_experiment():
-    obj.set_u_fcn(monoharm_u)
+    # obj.set_u_fcn(monoharm_u)
+    obj.set_u_fcn(impulse_u)
 
     sol, t = obj.calcODE()
 
-    u = monoharm_u(0, t)
+    #u = monoharm_u(0, t)
+    u = impulse_u(0, t)
 
     Plotter.draw([t, [sol, u]])
 
@@ -74,9 +81,11 @@ def model_and_analyzing():
 
 
 obj = RealObject()
+sig = SignalGenerator()
 
 object_free_movements()
 monoharm_u = return_monoharm_u()
+impulse_u = return_impulse_u()
 sol, t = do_experiment()
 model_and_analyzing()
 

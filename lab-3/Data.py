@@ -1,8 +1,6 @@
 import os
 import json
 
-from sympy.core.sympify import sympify
-
 
 class Data:
     def __init__(self):
