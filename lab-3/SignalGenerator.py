@@ -4,10 +4,11 @@ from scipy import signal
 
 
 class SignalGenerator:
-    def __init__(self):
+    def __init__(self, pike_index=None):
         self.amplitude = params['numeric']['amplitude']
         self.discretization = params['numeric']['discretization']
-        self.pike_index = int(np.random.sample()*self.discretization)
+        self.pike_index = int(
+            np.random.sample()*self.discretization) if not bool(pike_index) else pike_index
         self.impulse_pike_counter = 0
         self.random_coeff = 0.3
 
@@ -19,7 +20,7 @@ class SignalGenerator:
             self.impulse_pike_counter += 1
 
         if not isinstance(t, np.ndarray):
-            return self.amplitude*(1 if self.impulse_pike_counter == 1 else 0)
+            return self.amplitude if self.impulse_pike_counter == 1 else 0
 
         return [dot*self.amplitude for dot in signal.unit_impulse(
             self.discretization, self.pike_index)]
