@@ -81,7 +81,7 @@ def model_and_analyzing():
 
 
 obj = RealObject()
-sig = SignalGenerator(pike_index=200)
+sig = SignalGenerator()
 
 object_free_movements()
 monoharm_u = return_monoharm_u()
