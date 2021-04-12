@@ -14,14 +14,6 @@ def object_free_movements():
     Plotter.draw([t, sol])
 
 
-def return_monoharm_u():
-    return sig.get_monoharm_u()
-
-
-def return_impulse_u():
-    return sig.get_impulse_u()
-
-
 def do_experiment():
     # obj.set_u_fcn(monoharm_u)
     obj.set_u_fcn(impulse_u)
@@ -84,8 +76,8 @@ obj = RealObject()
 sig = SignalGenerator()
 
 object_free_movements()
-monoharm_u = return_monoharm_u()
-impulse_u = return_impulse_u()
+monoharm_u = sig.get_u('monoharm')
+impulse_u = sig.get_u('impulse')
 sol, t = do_experiment()
 model_and_analyzing()
 

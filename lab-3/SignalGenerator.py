@@ -8,8 +8,12 @@ class SignalGenerator:
     def __init__(self):
         self.amplitude = params['numeric']['amplitude']
         self.duration = params['numeric']['duration']
-        self.shift = 0.5 * self.duration
-        self.to_approximate = 15
+        self.shift = params['numeric']['shift_coeff'] * self.duration
+        self.to_approximate = params['numeric']['to_approximate']
+        self.u = {
+            'monoharm': self.monoharm_u,
+            'impulse': self.impulse_u,
+        }
 
     def monoharm_u(self, x, t):
         return self.amplitude*np.sin(self.to_approximate * t * 2 * np.pi)
@@ -22,8 +26,5 @@ class SignalGenerator:
 
         return suppression(self.amplitude * np.sinc(self.to_approximate * (t - self.shift) * 2 * np.pi))
 
-    def get_monoharm_u(self):
-        return self.monoharm_u
-
-    def get_impulse_u(self):
-        return self.impulse_u
+    def get_u(self, sig):
+        return self.u[sig]
