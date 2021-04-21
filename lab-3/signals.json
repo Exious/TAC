@@ -1,0 +1,15 @@
+{
+    "monoharm": {
+        "amplitude": "3",
+        "to_approximate": "0.1"
+    },
+    "impulse": {
+        "amplitude": "3",
+        "shift": "0.5",
+        "to_approximate": "0.1"
+    },
+    "square": {
+        "amplitude": "3",
+        "to_approximate": "0.1"
+    }
+}

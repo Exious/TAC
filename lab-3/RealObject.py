@@ -16,6 +16,8 @@ class RealObject:
         self.nonlin_par_1 = params['numeric']['nonlin_par_1']
         self.nonlin_par_2 = params['numeric']['nonlin_par_2']
         self.nonlin_fcns = [self.deadZone, self.saturation, self.relay]
+        #self.nonlin_fcns = [self.relay, self.deadZone, self.saturation]
+        #self.nonlin_fcns = [self.saturation, self.relay, self.deadZone]
         self.nonlin_names = ['deadZone', 'saturation', 'relay']
         self.nonlin_type = params['numeric']['nonlin_type']
         self._params = [self.lin_par_1, self.lin_par_2,
@@ -57,7 +59,7 @@ class RealObject:
         lin_par_1, lin_par_2, nonlin_par_1, nonlin_par_2 = k
 
         dydt = (lin_par_1 * self.nonlin_fcns[self.nonlin_type]
-                (u, nonlin_par_1, nonlin_par_2) - x) / lin_par_2
+                (u, nonlin_par_1, nonlin_par_2) - y) / lin_par_2
         return dydt
 
     def _default_control(x, t):

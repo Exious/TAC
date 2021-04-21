@@ -5,29 +5,37 @@ from scipy import signal
 
 class SignalGenerator:
     def __init__(self):
-        self.amplitude = params['numeric']['amplitude']
+        #self.amplitude = params['numeric']['amplitude']
         self.duration = params['numeric']['duration']
-        self.shift = params['numeric']['shift_coeff'] * self.duration
-        self.to_approximate = params['numeric']['to_approximate']
+        #self.shift = params['numeric']['shift_coeff'] * self.duration
+        #self.to_approximate = params['numeric']['to_approximate']
+        self.signals = params['signals']
         self.u = {
             'monoharm': self.monoharm_u,
             'impulse': self.impulse_u,
-            'meandr': self.meandr_u,
+            'square': self.square_u,
         }
 
     def monoharm_u(self, x, t):
-        return self.amplitude*np.sin(self.to_approximate * t * 2 * np.pi)
+        ins = self.signals['monoharm']
+        return ins['amplitude']*np.sin(ins['to_approximate'] * t * 2 * np.pi)
+        # return 3*np.sin(0.1 * t * 2 * np.pi)
 
     def impulse_u(self, x, t):
         def suppression(sig):
-            if not isinstance(sig, np.ndarray):
-                return sig if np.abs(sig) > self.amplitude/2 else 0
-            return [dot if np.abs(dot) > self.amplitude/2 else 0 for dot in sig]
+            return sig if np.abs(sig) > ins['amplitude']/2 else 0
 
-        return suppression(self.amplitude * np.sinc(self.to_approximate * (t - self.shift) * 2 * np.pi))
+        ins = self.signals['impulse']
 
-    def meandr_u(self, x, t):
-        return self.amplitude*signal.square(self.to_approximate * t * 2 * np.pi)
+        shift = ins['shift'] * self.duration
+
+        to_suppres = np.vectorize(suppression)
+
+        return to_suppres(ins['amplitude'] * np.sinc(ins['to_approximate'] * (t - shift) * 2 * np.pi))
+
+    def square_u(self, x, t):
+        ins = self.signals['square']
+        return ins['amplitude']*signal.square(ins['to_approximate'] * t * 2 * np.pi)
 
     def get_u(self, sig):
         return self.u[sig]
