@@ -6,6 +6,14 @@ from SignalGenerator import SignalGenerator
 import matplotlib.pyplot as plt
 from sympy import *
 
+from sklearn.preprocessing import MinMaxScaler
+import tensorflow as tf
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from sklearn.preprocessing import LabelEncoder
+from sklearn.metrics import mean_squared_error
+from math import sqrt
+
 
 def object_free_movements():
     sol, t = obj.calcODE()
@@ -45,12 +53,15 @@ def model_and_analyzing():
     def ode_non_lin():
         def decor(x, t, k):
             y = x
-            [K, T] = k
+            [non_lin_K, non_lin_T] = k
+            # 0.49552405 0.31239089
+            K = 0.49552405
+            T = 0.31239089
 
             u = u_func(x, t)
 
-            import numpy as np
-            dydt = (K*np.cos(u)-y)/T
+            dydt = (K*obj.nonlin_fcns[obj.nonlin_type]
+                    (u, non_lin_K, non_lin_T) - y)/T
             return dydt
 
         return decor
@@ -68,7 +79,7 @@ def model_and_analyzing():
     ode_func_map = {
         'ideal': ode_ideal(),
         'lin': ode_lin(),
-        # 'non_lin': ode_non_lin(),
+        'non_lin': ode_non_lin(),
     }
 
     experiments = [[t, sol], ]
@@ -85,7 +96,8 @@ sig = SignalGenerator()
 
 sol, t = object_free_movements()
 
-for sig_name in ['monoharm', 'impulse', 'square']:
+for sig_name in params['signals'].keys():
+    # for sig_name in ['step']:
     print("Signal name is {}".format(sig_name))
 
     u_func = sig.get_u(sig_name)
@@ -93,6 +105,97 @@ for sig_name in ['monoharm', 'impulse', 'square']:
     sol, t = do_experiment()
 
     model_and_analyzing()
+
+    def neural():
+        import numpy as np
+        scaler = MinMaxScaler(feature_range=(-1, 1))
+
+        def series2dataset(data, seq_len):
+            """
+            Преобразование временной последовательнсти к формату датасета
+            Шаг дискретизации должен быть постоянным
+            """
+            dataset = []
+            for i in range(data.shape[0]-seq_len):
+                r = np.copy(data[i:i+seq_len])
+                dataset.append(r)
+            return np.array(dataset)
+
+        values = u_func(0, t)
+        model_order = 5
+
+        # Этой командой получается массив обучающих последовательностей с одного
+        # эксперимента, для работы с несколькими экспериментами, можно получить
+        # последовательно массивы отдельно по каждому эксперименту, а затем объединить
+        # массивы
+        x_values = series2dataset(values, model_order)
+        x_values = np.expand_dims(x_values, 2)
+        print(x_values.shape)
+
+        # Разделим на тестовую и обучающие выборки
+        # В случае использования нескольких экспериментов (>5), в качестве тестового
+        # лучше взять один из экспериментов целиком
+        n_train_samples = int(x_values.shape[0] * 0.7)
+
+        train_X = x_values[:n_train_samples, :]
+        test_X = x_values[n_train_samples:, :]
+
+        y_values = scaler.fit_transform(sol)
+        y_values = y_values[model_order:]
+        train_y = y_values[:n_train_samples]
+        test_y = y_values[n_train_samples:]
+
+        print("Shape of train is {}, {}, shape of test is {}, {}".format(train_X.shape,
+                                                                         train_y.shape,
+                                                                         test_X.shape,
+                                                                         test_y.shape))
+        model = Sequential()
+
+        model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
+        model.add(Dense(1))
+        model.compile(loss='mean_squared_error', optimizer='adam')
+
+        # fit network
+        history = model.fit(train_X,
+                            train_y,
+                            epochs=100,
+                            batch_size=72,
+                            validation_data=(test_X, test_y),
+                            verbose=1,
+                            shuffle=False)
+        # plot history
+        plt.figure()
+        plt.plot(history.history['loss'], label='train')
+        plt.plot(history.history['val_loss'], label='test')
+        plt.legend()
+
+        # делаем предсказание
+        yhat = model.predict(test_X)
+
+        # обратное масштабирование для прогноза
+        inv_yhat = yhat  # scaler.inverse_transform(yhat)
+        #inv_yhat = inv_yhat[:,0]
+        # обратное масштабирование для фактического
+        inv_y = test_y  # scaler.inverse_transform(test_y)
+        #inv_y = inv_y[:,0]
+        # calculate RMSE
+        rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
+        print('Test RMSE: %.3f' % rmse)
+
+        # Соединяем обратно входные данные
+        X = np.concatenate((train_X, test_X), axis=0)
+        Y_real = np.concatenate((train_y, test_y), axis=0)
+        # делаем предсказание
+        Y = model.predict(X)
+
+        print(X.shape, Y.shape)
+
+        plt.figure()
+        plt.plot(Y_real)
+        plt.plot(Y)
+        return 1
+
+    neural()
 
 
 plt.show()

@@ -15,7 +15,9 @@ class RealObject:
         self.lin_par_2 = params['numeric']['lin_par_2']
         self.nonlin_par_1 = params['numeric']['nonlin_par_1']
         self.nonlin_par_2 = params['numeric']['nonlin_par_2']
-        self.nonlin_fcns = [self.deadZone, self.saturation, self.relay]
+        #self.nonlin_fcns = [self.deadZone, self.saturation, self.relay]
+        self.nonlin_fcns = [self.saturation,  self.relay, self.deadZone]
+        #self.nonlin_fcns = [self.deadZone,  self.relay, self.saturation]
         self.nonlin_names = ['deadZone', 'saturation', 'relay']
         self.nonlin_type = params['numeric']['nonlin_type']
         self._params = [self.lin_par_1, self.lin_par_2,

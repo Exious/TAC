@@ -1,15 +1,25 @@
 {
     "monoharm": {
-        "amplitude": "3",
+        "amplitude": "6",
         "to_approximate": "0.1"
     },
     "impulse": {
-        "amplitude": "3",
+        "amplitude": "6",
+        "to_approximate": "0.1",
+        "duration": "0.01"
+    },
+    "sinc_impulse": {
+        "amplitude": "6",
         "shift": "0.5",
         "to_approximate": "0.1"
     },
     "square": {
-        "amplitude": "3",
+        "amplitude": "6",
+        "to_approximate": "0.1"
+    },
+    "step": {
+        "amplitude": "6",
+        "shift": "0.5",
         "to_approximate": "0.1"
     }
 }
