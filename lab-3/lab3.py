@@ -53,15 +53,12 @@ def model_and_analyzing():
     def ode_non_lin():
         def decor(x, t, k):
             y = x
-            [non_lin_K, non_lin_T] = k
-            # 0.49552405 0.31239089
-            K = 0.49552405
-            T = 0.31239089
+            [K, T, non_lin_1, non_lin_2] = k
 
             u = u_func(x, t)
 
             dydt = (K*obj.nonlin_fcns[obj.nonlin_type]
-                    (u, non_lin_K, non_lin_T) - y)/T
+                    (u, non_lin_1, non_lin_2) - y)/T
             return dydt
 
         return decor
@@ -161,7 +158,7 @@ for sig_name in params['signals'].keys():
                             epochs=100,
                             batch_size=72,
                             validation_data=(test_X, test_y),
-                            verbose=1,
+                            verbose=0,  # выключить или включить
                             shuffle=False)
         # plot history
         plt.figure()
@@ -193,7 +190,6 @@ for sig_name in params['signals'].keys():
         plt.figure()
         plt.plot(Y_real)
         plt.plot(Y)
-        return 1
 
     neural()
 
