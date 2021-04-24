@@ -14,6 +14,9 @@ class Plotter:
         plt.figure()
 
         for every_y in y:
-            plt.plot(x, every_y)
+            if x is None:
+                plt.plot(every_y)
+            else:
+                plt.plot(x, every_y)
 
         plt.grid()

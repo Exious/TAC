@@ -3,6 +3,7 @@ from ParameterEstimator import ParameterEstimator
 from Plotter import Plotter
 from RealObject import RealObject
 from SignalGenerator import SignalGenerator
+from Neural import Neural
 import matplotlib.pyplot as plt
 from sympy import *
 
@@ -88,110 +89,123 @@ def model_and_analyzing():
         analyze(guess, y0, ode_func_map[ode_type])
 
 
+def neural1(q):
+    import numpy as np
+    scaler = MinMaxScaler(feature_range=(-1, 1))
+
+    def series2dataset(data, seq_len):
+        """
+        Преобразование временной последовательнсти к формату датасета
+        Шаг дискретизации должен быть постоянным
+        """
+        dataset = []
+        for i in range(data.shape[0]-seq_len):
+            r = np.copy(data[i:i+seq_len])
+            dataset.append(r)
+        return np.array(dataset)
+
+    values = u_func(0, t)
+    model_order = 5
+
+    # Этой командой получается массив обучающих последовательностей с одного
+    # эксперимента, для работы с несколькими экспериментами, можно получить
+    # последовательно массивы отдельно по каждому эксперименту, а затем объединить
+    # массивы
+    x_values = series2dataset(values, model_order)
+    x_values = np.expand_dims(x_values, 2)
+
+    # Разделим на тестовую и обучающие выборки
+    # В случае использования нескольких экспериментов (>5), в качестве тестового
+    # лучше взять один из экспериментов целиком
+    n_train_samples = int(x_values.shape[0] * 0.7)
+
+    train_X = x_values[:n_train_samples, :]
+    test_X = x_values[n_train_samples:, :]
+
+    y_values = scaler.fit_transform(sol)
+    y_values = y_values[model_order:]
+    train_y = y_values[:n_train_samples]
+    test_y = y_values[n_train_samples:]
+
+    print("Shape of train is {}, {}, shape of test is {}, {}".format(train_X.shape,
+                                                                     train_y.shape,
+                                                                     test_X.shape,
+                                                                     test_y.shape))
+    model = Sequential()
+
+    model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
+    model.add(Dense(1))
+
+    print('-----------', train_X.shape,
+          train_X.shape[1], train_X.shape[2])
+    model.compile(loss='mean_squared_error', optimizer='adam')
+
+    # fit network
+    history = model.fit(train_X,
+                        train_y,
+                        epochs=100,
+                        batch_size=72,
+                        validation_data=(test_X, test_y),
+                        verbose=0,  # выключить или включить
+                        shuffle=False)
+    # plot history
+    plt.figure()
+    plt.plot(history.history['loss'], label='train')
+    plt.plot(history.history['val_loss'], label='test')
+    plt.legend()
+
+    # делаем предсказание
+    yhat = model.predict(test_X)
+
+    # обратное масштабирование для прогноза
+    inv_yhat = yhat  # scaler.inverse_transform(yhat)
+    # inv_yhat = inv_yhat[:,0]
+    # обратное масштабирование для фактического
+    inv_y = test_y  # scaler.inverse_transform(test_y)
+    # inv_y = inv_y[:,0]
+    # calculate RMSE
+    rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
+    print('Test RMSE: %.3f' % rmse)
+
+    # Соединяем обратно входные данные
+    X = np.concatenate((train_X, test_X), axis=0)
+    Y_real = np.concatenate((train_y, test_y), axis=0)
+    # делаем предсказание
+    Y = model.predict(X)
+
+    print(X.shape, Y.shape)
+
+    plt.figure()
+    plt.plot(Y_real)
+    plt.plot(Y)
+
+
 obj = RealObject()
 sig = SignalGenerator()
+neural = Neural(model_order=2)
 
 sol, t = object_free_movements()
 
-for sig_name in params['signals'].keys():
-    # for sig_name in ['step']:
+gl_dataset = []
+
+# for sig_name in params['signals'].keys():
+for sig_name in ['monoharm']:
     print("Signal name is {}".format(sig_name))
 
     u_func = sig.get_u(sig_name)
 
     sol, t = do_experiment()
 
-    model_and_analyzing()
+    # model_and_analyzing()
 
-    def neural():
-        import numpy as np
-        scaler = MinMaxScaler(feature_range=(-1, 1))
+    # neural1(50)
 
-        def series2dataset(data, seq_len):
-            """
-            Преобразование временной последовательнсти к формату датасета
-            Шаг дискретизации должен быть постоянным
-            """
-            dataset = []
-            for i in range(data.shape[0]-seq_len):
-                r = np.copy(data[i:i+seq_len])
-                dataset.append(r)
-            return np.array(dataset)
-
-        values = u_func(0, t)
-        model_order = 5
-
-        # Этой командой получается массив обучающих последовательностей с одного
-        # эксперимента, для работы с несколькими экспериментами, можно получить
-        # последовательно массивы отдельно по каждому эксперименту, а затем объединить
-        # массивы
-        x_values = series2dataset(values, model_order)
-        x_values = np.expand_dims(x_values, 2)
-        print(x_values.shape)
-
-        # Разделим на тестовую и обучающие выборки
-        # В случае использования нескольких экспериментов (>5), в качестве тестового
-        # лучше взять один из экспериментов целиком
-        n_train_samples = int(x_values.shape[0] * 0.7)
-
-        train_X = x_values[:n_train_samples, :]
-        test_X = x_values[n_train_samples:, :]
-
-        y_values = scaler.fit_transform(sol)
-        y_values = y_values[model_order:]
-        train_y = y_values[:n_train_samples]
-        test_y = y_values[n_train_samples:]
-
-        print("Shape of train is {}, {}, shape of test is {}, {}".format(train_X.shape,
-                                                                         train_y.shape,
-                                                                         test_X.shape,
-                                                                         test_y.shape))
-        model = Sequential()
-
-        model.add(LSTM(50, input_shape=(train_X.shape[1], train_X.shape[2])))
-        model.add(Dense(1))
-        model.compile(loss='mean_squared_error', optimizer='adam')
-
-        # fit network
-        history = model.fit(train_X,
-                            train_y,
-                            epochs=100,
-                            batch_size=72,
-                            validation_data=(test_X, test_y),
-                            verbose=0,  # выключить или включить
-                            shuffle=False)
-        # plot history
-        plt.figure()
-        plt.plot(history.history['loss'], label='train')
-        plt.plot(history.history['val_loss'], label='test')
-        plt.legend()
-
-        # делаем предсказание
-        yhat = model.predict(test_X)
-
-        # обратное масштабирование для прогноза
-        inv_yhat = yhat  # scaler.inverse_transform(yhat)
-        #inv_yhat = inv_yhat[:,0]
-        # обратное масштабирование для фактического
-        inv_y = test_y  # scaler.inverse_transform(test_y)
-        #inv_y = inv_y[:,0]
-        # calculate RMSE
-        rmse = sqrt(mean_squared_error(inv_y, inv_yhat))
-        print('Test RMSE: %.3f' % rmse)
-
-        # Соединяем обратно входные данные
-        X = np.concatenate((train_X, test_X), axis=0)
-        Y_real = np.concatenate((train_y, test_y), axis=0)
-        # делаем предсказание
-        Y = model.predict(X)
-
-        print(X.shape, Y.shape)
-
-        plt.figure()
-        plt.plot(Y_real)
-        plt.plot(Y)
-
-    neural()
-
+    neural.setSignal(u_func(0, t), sol)
+    neural.series2dataset().expandDimensions()
+    neural.setInput().setOutput()
+    neural.separateSequenses()
+    neural.modelConstruct()
+    neural.invertedScaling()
+    neural.predict()
 
 plt.show()
