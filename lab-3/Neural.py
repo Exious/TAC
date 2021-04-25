@@ -21,7 +21,7 @@ class Neural():
 
         self.common = {
             'input': None,
-            'output': np.ndarray([]),
+            'output': None,
         }
 
         self.signal = None
@@ -42,6 +42,11 @@ class Neural():
         self.batch_size = neural_params['batch_size']
         self.enable_verbose = neural_params['enable_verbose']
 
+    def concatenateSequences(self, first, second):
+        if first is not None:
+            return np.concatenate((first, second), axis=0)
+        return second
+
     def setSignal(self, u_func, sol, t):
         self.signal = u_func(0, t)
         self.sol = sol
@@ -58,30 +63,18 @@ class Neural():
         self.dataset = np.expand_dims(self.dataset, self.dims2expand)
         return self
 
-    def concatenateSequences(self, first, second):
-        if first is not None:
-            return np.concatenate((first, second), axis=0)
-        return second
-
     def setInput(self):
         self.input = self.dataset
-        print(self.common['input'])
         self.common['input'] = self.concatenateSequences(
             self.common['input'], self.input)
-        # print(self.input[0])
-        #self.common['input'] = self.common['input'].append(self.input)
-        #self.common['input'] = np.append(self.common['input'], self.input)
-        #self.common['input'] = np.ndarray([*self.common['input'], *self.input])
-        #self.common['input'] = self.common['input'] + self.input
-        # print(self.common['input'][0])
-        #self.common['input'] = np.concatenate((self.common['input'],), axis=0)
         self.dataset = []
         return self
 
     def setOutput(self):
         self.output = self.scaler.fit_transform(
             self.sol)[self.estimated_model_order:]
-        self.common['output'] = self.common['output'] + self.output
+        self.common['output'] = self.concatenateSequences(
+            self.common['output'], self.output)
         return self
 
     def separateSequenses(self):
