@@ -5,20 +5,23 @@ from tensorflow.keras.layers import LSTM, Dense
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import mean_squared_error
-from math import sqrt
 from Plotter import Plotter
+from Data import params
 
 
 class Neural():
-    def __init__(self, model_order):
-        self.scaler = MinMaxScaler(feature_range=(-1, 1))
-        self.estimated_model_order = int(2.5 * model_order)
-        self.separate_coeff = 0.7
-        self.dims2expand = 2
+    def __init__(self):
+        neural_params = params['neural']
+        self.scaler = MinMaxScaler(
+            feature_range=neural_params['min_max_scaler'])
+        self.estimated_model_order = int(
+            neural_params['order_factor'] * neural_params['model_order'])
+        self.separate_coeff = neural_params['separate_factor']
+        self.dims2expand = neural_params['dimensions_to_expand']
 
         self.common = {
-            'input': [],
-            'output': [],
+            'input': None,
+            'output': np.ndarray([]),
         }
 
         self.signal = None
@@ -33,14 +36,14 @@ class Neural():
         self.model = None
         self.history = None
 
-        self.LSTM_units = 50
-        self.Dense_units = 1
-        self.epochs = 100
-        self.batch_size = 72
-        self.enable_verbose = 0
+        self.LSTM_units = neural_params['LSTM_units']
+        self.Dense_units = neural_params['Dense_units']
+        self.epochs = neural_params['epochs_count']
+        self.batch_size = neural_params['batch_size']
+        self.enable_verbose = neural_params['enable_verbose']
 
-    def setSignal(self, signal, sol):
-        self.signal = signal
+    def setSignal(self, u_func, sol, t):
+        self.signal = u_func(0, t)
         self.sol = sol
         return self
 
@@ -55,16 +58,30 @@ class Neural():
         self.dataset = np.expand_dims(self.dataset, self.dims2expand)
         return self
 
+    def concatenateSequences(self, first, second):
+        if first is not None:
+            return np.concatenate((first, second), axis=0)
+        return second
+
     def setInput(self):
         self.input = self.dataset
-        self.common['input'].append(self.input)
+        print(self.common['input'])
+        self.common['input'] = self.concatenateSequences(
+            self.common['input'], self.input)
+        # print(self.input[0])
+        #self.common['input'] = self.common['input'].append(self.input)
+        #self.common['input'] = np.append(self.common['input'], self.input)
+        #self.common['input'] = np.ndarray([*self.common['input'], *self.input])
+        #self.common['input'] = self.common['input'] + self.input
+        # print(self.common['input'][0])
+        #self.common['input'] = np.concatenate((self.common['input'],), axis=0)
         self.dataset = []
         return self
 
     def setOutput(self):
         self.output = self.scaler.fit_transform(
             self.sol)[self.estimated_model_order:]
-        self.common['output'].append(self.output)
+        self.common['output'] = self.common['output'] + self.output
         return self
 
     def separateSequenses(self):
@@ -103,10 +120,23 @@ class Neural():
         yhat = self.model.predict(test_X)
 
         inverted_yhat = yhat
+
+        i1 = self.scaler.inverse_transform(yhat)
+        i2 = inverted_yhat[:, 0]
+
         inverted_y = test_y
 
-        rmse = sqrt(mean_squared_error(inverted_y, inverted_yhat))
+        t1 = self.scaler.inverse_transform(test_y)
+        t2 = inverted_y[:, 0]
+
+        rmse = np.sqrt(mean_squared_error(inverted_y, inverted_yhat))
         print('Test RMSE: %.3f' % rmse)
+
+        rmse1 = np.sqrt(mean_squared_error(i1, t1))
+        rmse2 = np.sqrt(mean_squared_error(i2, t2))
+        print(rmse)
+        print(rmse1)
+        print(rmse2)
 
     def predict(self):
         train_X, train_y = self.train
@@ -117,4 +147,4 @@ class Neural():
 
         Y_predicted = self.model.predict(X)
 
-        Plotter.draw([None, [Y_real,Y_predicted]])
+        Plotter.draw([None, [Y_real, Y_predicted]])
