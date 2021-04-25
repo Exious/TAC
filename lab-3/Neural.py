@@ -11,7 +11,7 @@ from Data import params
 
 class Neural():
     def __init__(self):
-        neural_params = params['neural']
+        neural_params = params['models']['neural']
         self.scaler = MinMaxScaler(
             feature_range=neural_params['min_max_scaler'])
         self.estimated_model_order = int(

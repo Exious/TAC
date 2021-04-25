@@ -5,21 +5,20 @@ import numpy as np
 
 class RealObject:
     def __init__(self):
-        self._var = params['numeric']['variant']
-        self.start_time = params['numeric']['start_time']
-        self.duration = params['numeric']['duration']
-        self.discretization = params['numeric']['discretization']
-        self.y0 = params['numeric']['initial_condition']
+        numeric_params = params['numeric']
+        self._var = numeric_params['variant']
+        self.start_time = numeric_params['start_time']
+        self.duration = numeric_params['duration']
+        self.discretization = numeric_params['discretization']
+        self.y0 = numeric_params['initial_condition']
         self._ctrl_fcn = RealObject._default_control
-        self.lin_par_1 = params['numeric']['lin_par_1']
-        self.lin_par_2 = params['numeric']['lin_par_2']
-        self.nonlin_par_1 = params['numeric']['nonlin_par_1']
-        self.nonlin_par_2 = params['numeric']['nonlin_par_2']
+        self.lin_par_1 = numeric_params['lin_par_1']
+        self.lin_par_2 = numeric_params['lin_par_2']
+        self.nonlin_par_1 = numeric_params['nonlin_par_1']
+        self.nonlin_par_2 = numeric_params['nonlin_par_2']
         self.nonlin_fcns = [self.deadZone, self.saturation, self.relay]
-        #self.nonlin_fcns = [self.saturation,  self.relay, self.deadZone]
-        #self.nonlin_fcns = [self.deadZone,  self.relay, self.saturation]
         self.nonlin_names = ['deadZone', 'saturation', 'relay']
-        self.nonlin_type = params['numeric']['nonlin_type']
+        self.nonlin_type = numeric_params['nonlin_type']
         self._params = [self.lin_par_1, self.lin_par_2,
                         self.nonlin_par_1, self.nonlin_par_2]
         print(self.lin_par_1, self.lin_par_2,

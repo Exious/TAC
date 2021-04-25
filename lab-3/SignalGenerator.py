@@ -5,8 +5,9 @@ from scipy import signal
 
 class SignalGenerator:
     def __init__(self):
-        self.duration = params['numeric']['duration']
-        self.discretization = params['numeric']['discretization']
+        numeric_params = params['numeric']
+        self.duration = numeric_params['duration']
+        self.discretization = numeric_params['discretization']
         self.signals = params['signals']
 
         self.u = {
