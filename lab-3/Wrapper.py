@@ -18,6 +18,8 @@ class Wrapper():
         self.t = None
         self.u = None
 
+        self.to_predict = 'monoharm'
+
     def object_free_movements(self):
         sol, t = self.obj.calcODE()
 
@@ -88,10 +90,12 @@ class Wrapper():
 
             analyze(guess, y0, ode_func_map[ode_type])
 
-    def neural_model_and_analyzing(self):
+        return self
+
+    def neural_model_and_analyzing(self, to_drop=False):
         self.neural.setSignal(self.u_func, self.sol, self.t)
         self.neural.series2dataset().expandDimensions()
-        self.neural.setInput().setOutput()
+        self.neural.setInput(to_drop).setOutput(to_drop)
         self.neural.separateSequenses()
         self.neural.modelConstruct()
         self.neural.invertedScaling()
@@ -102,15 +106,24 @@ class Wrapper():
 
         # for sig_name in params['signals'].keys():
         # for sig_name in ['step', 'monoharm']:
-        for sig_name in ['monoharm']:
+        for sig_name in ['step']:
             print("Signal name is {}".format(sig_name))
 
             self.u_func = self.sig.get_u(sig_name)
 
             self.do_experiment()
-            self.model_and_analyzing()
-            self.neural_model_and_analyzing()
+
+            # self.model_and_analyzing()
+
+            to_drop = False
+
+            if sig_name == self.to_predict:
+                to_drop = True
+            #    continue
+
+            self.neural_model_and_analyzing(to_drop=to_drop)
 
         #print(neural.common['input'][996], neural.common['output'][996])
-        #print(neural.common['input'].shape, neural.common['output'].shape)
+        print(self.neural.common['input'].shape,
+              self.neural.scaler.inverse_transform(self.neural.common['output']))
         # plt.show()

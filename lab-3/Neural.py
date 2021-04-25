@@ -63,18 +63,20 @@ class Neural():
         self.dataset = np.expand_dims(self.dataset, self.dims2expand)
         return self
 
-    def setInput(self):
+    def setInput(self, to_drop):
         self.input = self.dataset
-        self.common['input'] = self.concatenateSequences(
-            self.common['input'], self.input)
+        if not to_drop:
+            self.common['input'] = self.concatenateSequences(
+                self.common['input'], self.input)
         self.dataset = []
         return self
 
-    def setOutput(self):
+    def setOutput(self, to_drop):
         self.output = self.scaler.fit_transform(
             self.sol)[self.estimated_model_order:]
-        self.common['output'] = self.concatenateSequences(
-            self.common['output'], self.output)
+        if not to_drop:
+            self.common['output'] = self.concatenateSequences(
+                self.common['output'], self.output)
         return self
 
     def separateSequenses(self):
@@ -123,6 +125,7 @@ class Neural():
         test_X, test_y = self.test
 
         X = np.concatenate((train_X, test_X), axis=0)
+        print(X)
         Y_real = np.concatenate((train_y, test_y), axis=0)
 
         Y_predicted = self.model.predict(X)
