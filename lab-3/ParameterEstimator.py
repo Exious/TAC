@@ -1,8 +1,8 @@
+import numpy as np
 from Data import params
 from scipy import optimize
 from scipy import integrate
 from scipy.integrate import odeint
-import numpy as np
 
 
 class ParameterEstimator():

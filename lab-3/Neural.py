@@ -1,11 +1,11 @@
 import numpy as np
 import tensorflow as tf
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import LSTM, Dense
+from Plotter import Plotter
+from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.preprocessing import LabelEncoder
-from sklearn.metrics import mean_squared_error
-from Plotter import Plotter
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
 from Data import params
 
 
@@ -113,23 +113,10 @@ class Neural():
         yhat = self.model.predict(test_X)
 
         inverted_yhat = yhat
-
-        i1 = self.scaler.inverse_transform(yhat)
-        i2 = inverted_yhat[:, 0]
-
         inverted_y = test_y
-
-        t1 = self.scaler.inverse_transform(test_y)
-        t2 = inverted_y[:, 0]
 
         rmse = np.sqrt(mean_squared_error(inverted_y, inverted_yhat))
         print('Test RMSE: %.3f' % rmse)
-
-        rmse1 = np.sqrt(mean_squared_error(i1, t1))
-        rmse2 = np.sqrt(mean_squared_error(i2, t2))
-        print(rmse)
-        print(rmse1)
-        print(rmse2)
 
     def predict(self):
         train_X, train_y = self.train

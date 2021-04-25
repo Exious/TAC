@@ -1,6 +1,6 @@
+import numpy as np
 from Data import params
 from scipy.integrate import odeint
-import numpy as np
 
 
 class RealObject:

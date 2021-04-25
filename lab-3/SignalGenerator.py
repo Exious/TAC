@@ -1,6 +1,6 @@
-from Data import params
 import numpy as np
 from scipy import signal
+from Data import params
 
 
 class SignalGenerator:

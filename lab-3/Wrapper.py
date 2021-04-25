@@ -1,9 +1,9 @@
 from Data import params
-from ParameterEstimator import ParameterEstimator
+from Neural import Neural
 from Plotter import Plotter
 from RealObject import RealObject
 from SignalGenerator import SignalGenerator
-from Neural import Neural
+from ParameterEstimator import ParameterEstimator
 import matplotlib.pyplot as plt
 
 
