@@ -92,10 +92,19 @@ class Wrapper():
 
         return self
 
-    def neural_model_and_analyzing(self, to_drop=False):
+    def neural_analyzing(self, to_drop=False):
         self.neural.setSignal(self.u_func, self.sol, self.t)
         self.neural.series2dataset().expandDimensions()
-        self.neural.setInput(to_drop).setOutput(to_drop)
+        self.neural.setInput(to_drop).setOutput(to_drop).scaleOutput(-1, 1)
+        self.neural_construct_model_and_predict()
+
+    def neural_common_invoke(self):
+        self.neural.setCommonInvoke()
+        self.neural.scaleOutput()
+        self.neural_construct_model_and_predict()
+        self.neural.setCommonInvoke()
+
+    def neural_construct_model_and_predict(self):
         self.neural.separateSequenses()
         self.neural.modelConstruct()
         self.neural.invertedScaling()
@@ -104,9 +113,9 @@ class Wrapper():
     def start(self):
         self.object_free_movements()
 
-        # for sig_name in params['signals'].keys():
-        # for sig_name in ['step', 'monoharm']:
-        for sig_name in ['step']:
+        for sig_name in params['signals'].keys():
+            # for sig_name in ['step', 'monoharm']:
+            # for sig_name in ['step']:
             print("Signal name is {}".format(sig_name))
 
             self.u_func = self.sig.get_u(sig_name)
@@ -119,11 +128,14 @@ class Wrapper():
 
             if sig_name == self.to_predict:
                 to_drop = True
-            #    continue
 
-            self.neural_model_and_analyzing(to_drop=to_drop)
+            self.neural_analyzing(to_drop=to_drop)
 
+        self.neural_common_invoke()
         #print(neural.common['input'][996], neural.common['output'][996])
-        print(self.neural.common['input'].shape,
-              self.neural.scaler.inverse_transform(self.neural.common['output']))
+        print(self.neural.common['input'].shape)
+        import numpy as np
+        print(np.array([self.neural.common['input'][i]
+                        for i in range(self.neural.common['input'].shape[0]) if (i+1) % 3]).shape)
+        # self.neural.scaler.inverse_transform(self.neural.common['output']))
         # plt.show()
