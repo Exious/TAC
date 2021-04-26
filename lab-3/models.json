@@ -23,6 +23,7 @@
         "enable_verbose": "0",
         "separate_factor": "0.7",
         "separate_over": "3",
-        "method": "every_n"
+        "method": "every_n",
+        "want_to_predict": "_monoharm"
     }
 }

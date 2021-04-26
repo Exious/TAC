@@ -18,7 +18,8 @@ class Wrapper():
         self.t = None
         self.u = None
 
-        self.to_predict = 'monoharm'
+        self.to_predict = params['models']['neural']['want_to_predict'][1:]
+        print(self.to_predict)
 
     def object_free_movements(self):
         sol, t = self.obj.calcODE()
