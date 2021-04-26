@@ -23,6 +23,6 @@
         "enable_verbose": "0",
         "separate_factor": "0.7",
         "separate_over": "3",
-        "method": "m:n_flat"
+        "method": "every_n"
     }
 }

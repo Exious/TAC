@@ -114,8 +114,6 @@ class Wrapper():
         self.object_free_movements()
 
         for sig_name in params['signals'].keys():
-            # for sig_name in ['step', 'monoharm']:
-            # for sig_name in ['step']:
             print("Signal name is {}".format(sig_name))
 
             self.u_func = self.sig.get_u(sig_name)
@@ -132,10 +130,3 @@ class Wrapper():
             self.neural_analyzing(to_drop=to_drop)
 
         self.neural_common_invoke()
-        #print(neural.common['input'][996], neural.common['output'][996])
-        print(self.neural.common['input'].shape)
-        import numpy as np
-        print(np.array([self.neural.common['input'][i]
-                        for i in range(self.neural.common['input'].shape[0]) if (i+1) % 3]).shape)
-        # self.neural.scaler.inverse_transform(self.neural.common['output']))
-        # plt.show()

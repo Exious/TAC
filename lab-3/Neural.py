@@ -1,10 +1,8 @@
 import numpy as np
-import tensorflow as tf
 from Utility import Utility
 from Plotter import Plotter
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
-from sklearn.preprocessing import LabelEncoder
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense
 from Data import params
@@ -29,17 +27,7 @@ class Neural():
             'to_predict': None,
         }
 
-        #self.signal = None
-        #self.sol = None
-
         self.dataset = []
-        # self.input = None
-        # self.train = None
-        #self.test = None
-        #self.output = None
-
-        #self.model = None
-        #self.history = None
 
         self.LSTM_units = neural_params['LSTM_units']
         self.Dense_units = neural_params['Dense_units']

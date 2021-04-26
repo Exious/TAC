@@ -19,7 +19,7 @@ class ParameterEstimator():
         self._f = f
         # Предполагаем, что все переменные состояния наблюдаемые, однако в общем случае это не так
         x_data, y_data = experiments[0]
-        self.n_observed = params['numeric']['n_observed']  # y_data.shape[1]
+        self.n_observed = params['numeric']['n_observed']
 
     def my_ls_func(self, x, teta):
         """

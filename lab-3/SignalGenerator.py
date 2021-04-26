@@ -25,7 +25,6 @@ class SignalGenerator:
 
     def impulse_u(self, x, t):
         def decor(x, t):
-            # if t <= (self.duration / (self.discretization - 1)):
             if t == 0:
                 return ins['amplitude']
             else:
