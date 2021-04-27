@@ -95,4 +95,4 @@ class ParameterEstimator():
 
         sol_ideal = odeint(func, self.y0, t, (self.args,))
 
-        return sol_ideal
+        return sol_ideal, self.args, self.y0

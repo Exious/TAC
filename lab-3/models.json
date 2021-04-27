@@ -3,11 +3,11 @@
         "guess": "1.1 0.3 2 2.2",
         "initial_condition": "1"
     },
-    "lin": {
+    "linear": {
         "guess": "1.1 0.3",
         "initial_condition": "0"
     },
-    "non_lin": {
+    "non_linear": {
         "guess": "0.5 0.3 2 2.2",
         "initial_condition": "0"
     },
@@ -24,6 +24,6 @@
         "separate_factor": "0.7",
         "separate_over": "3",
         "method": "every_n",
-        "want_to_predict": "_monoharm"
+        "want_to_predict": "_monoharmonic"
     }
 }

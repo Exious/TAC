@@ -11,15 +11,15 @@ class SignalGenerator:
         self.signals = params['signals']
 
         self.u = {
-            'monoharm': self.monoharm_u,
+            'monoharmonic': self.monoharmonic_u,
             'impulse': self.impulse_u,
             'sinc_impulse': self.sinc_impulse_u,
             'square': self.square_u,
             'step': self.step_u,
         }
 
-    def monoharm_u(self, x, t):
-        ins = self.signals['monoharm']
+    def monoharmonic_u(self, x, t):
+        ins = self.signals['monoharmonic']
 
         return ins['amplitude']*np.sin(ins['to_approximate'] * t * 2 * np.pi)
 

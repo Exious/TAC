@@ -105,7 +105,7 @@ class Neural():
 
         return self
 
-    def modelConstruct(self):
+    def modelConstruct(self, options=None):
         train_X, train_y = self.train
         test_X, test_y = self.test
 
@@ -126,7 +126,7 @@ class Neural():
                                       shuffle=False)
 
         Plotter.draw(
-            [None, [self.history.history['loss'], self.history.history['val_loss']]])
+            [None, [self.history.history['loss'], self.history.history['val_loss']]], options=options)
 
     def invertedScaling(self):
         test_X, test_y = self.test
@@ -138,7 +138,7 @@ class Neural():
         rmse = np.sqrt(mean_squared_error(inverted_y, inverted_yhat))
         print('Test RMSE: %.3f' % rmse)
 
-    def predict(self):
+    def predict(self, options=None):
         train_X, train_y = self.train
         test_X, test_y = self.test
 
@@ -159,4 +159,4 @@ class Neural():
         Y_predicted = self.model.predict(X)
         to_plot.append(Y_predicted)
 
-        Plotter.draw([None, to_plot])
+        Plotter.draw([None, to_plot], options=options)

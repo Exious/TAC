@@ -6,8 +6,8 @@
     "nonlin_par_2":"self.variant % 12 * 0.45",
     "nonlin_type":"self.variant % 3",
     "start_time": "0",
-    "duration": "250",
-    "discretization": "10001",
+    "duration": "50",
+    "discretization": "1001",
     "initial_condition": "1",
     "default_initial_condition": "0",
     "n_observed": "1"
