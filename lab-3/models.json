@@ -1,0 +1,29 @@
+{
+    "ideal": {
+        "guess": "1.1 0.3 2 2.2",
+        "initial_condition": "1"
+    },
+    "linear": {
+        "guess": "1 0.5",
+        "initial_condition": "0"
+    },
+    "non_linear": {
+        "guess": "1 0.5 4 0.7",
+        "initial_condition": "0"
+    },
+    "neural": {
+        "min_max_scaler": "-1 1",    
+        "order_factor": "2.5",
+        "model_order": "2",
+        "dimensions_to_expand": "2",
+        "LSTM_units": "50",
+        "Dense_units": "1",
+        "epochs_count": "100",
+        "batch_size": "72",
+        "enable_verbose": "0",
+        "separate_factor": "0.7",
+        "separate_over": "3",
+        "method": "every_n",
+        "want_to_predict": "_monoharmonic"
+    }
+}
