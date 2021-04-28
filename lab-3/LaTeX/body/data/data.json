@@ -1,0 +1,96 @@
+{
+    "variant": 14,
+    "duration": 50,
+    "discretization": 1001,
+    "want_to_predict": "_sinc_impulse",
+    "method": "every_n",
+    "experiment": {
+        "monoharmonic": {
+            "guess": [
+                0.8,
+                0.25,
+                4.8999999999999995,
+                0.9
+            ],
+            "y0": [
+                1
+            ]
+        },
+        "impulse": {
+            "guess": [
+                0.8,
+                0.25,
+                4.8999999999999995,
+                0.9
+            ],
+            "y0": [
+                1
+            ]
+        },
+        "sinc_impulse": {
+            "guess": [
+                0.8,
+                0.25,
+                4.8999999999999995,
+                0.9
+            ],
+            "y0": [
+                1
+            ]
+        },
+        "square": {
+            "guess": [
+                0.8,
+                0.25,
+                4.8999999999999995,
+                0.9
+            ],
+            "y0": [
+                1
+            ]
+        },
+        "step": {
+            "guess": [
+                0.8,
+                0.25,
+                4.8999999999999995,
+                0.9
+            ],
+            "y0": [
+                1
+            ]
+        }
+    },
+    "sig_params": {
+        "monoharmonic": {
+            "amplitude": 6,
+            "to_approximate": 0.1,
+            "shift": null,
+            "duration": null
+        },
+        "impulse": {
+            "amplitude": 6,
+            "to_approximate": 0.1,
+            "shift": null,
+            "duration": 0.01
+        },
+        "sinc_impulse": {
+            "amplitude": 6,
+            "to_approximate": 0.1,
+            "shift": 0.5,
+            "duration": null
+        },
+        "square": {
+            "amplitude": 6,
+            "to_approximate": 0.1,
+            "shift": null,
+            "duration": null
+        },
+        "step": {
+            "amplitude": 6,
+            "to_approximate": 0.1,
+            "shift": 0.5,
+            "duration": null
+        }
+    }
+}
