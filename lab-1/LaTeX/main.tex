@@ -1,0 +1,65 @@
+% !TeX root = main.tex
+% !TeX spellcheck = russian-aot
+% !TeX encoding = UTF-8
+\documentclass[14pt,a4paper]{article}
+\usepackage[T1, T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[english, russian]{babel}
+\usepackage{graphicx}
+\usepackage[unicode]{hyperref}
+\usepackage{adjustbox}
+\usepackage[normalem]{ulem}
+\usepackage{enumitem}
+\usepackage[14pt]{extsizes}
+\usepackage[left=30mm, top=20mm, right=15mm, bottom=20mm, nohead, footskip=10mm]{geometry} % настройки полей документа
+\setlength{\parindent}{12.5 mm}
+\usepackage{indentfirst}
+\usepackage{pgfplots}
+\usepackage{pdfpages} 
+\usepackage{float}
+\pgfplotsset{compat=1.9}
+
+
+\usepackage{titlesec}
+\titleformat{\section}
+{\filcenter\bfseries}
+{\thesection}
+{1em}
+{\MakeUppercase}{}
+
+\usepackage[tableposition=top,singlelinecheck=false]{caption}
+\usepackage{subcaption}
+
+\DeclareCaptionLabelFormat{gostfigure}{Рисунок #2}
+\DeclareCaptionLabelFormat{gosttable}{Таблица #2}
+\DeclareCaptionLabelSeparator{gost}{~---~}
+\captionsetup{labelsep=gost}
+\captionsetup*[figure]{labelformat=gostfigure, justification=centering}
+\captionsetup*[table]{labelformat=gosttable, justification=centering}
+\renewcommand{\thesubfigure}{\asbuk{subfigure}}
+
+
+
+\setlist[enumerate]{label*=\arabic*.}
+\useunder{\uline}{\ul}{}
+\hypersetup{
+	colorlinks=true,
+	urlcolor=blue,
+    linkcolor=black,
+}
+
+\begin{document}
+	\input{title/title.tex}
+    \pagenumbering{gobble}
+    \newpage
+    \pagenumbering{arabic}
+
+    
+    
+    \tableofcontents
+    \setcounter{page}{2}
+    \newpage
+    
+    \input{body/body.tex}	
+    \bibliographystyle{BibTeX-Styles/utf8gost780u}
+\end{document}
